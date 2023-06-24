@@ -14,6 +14,9 @@
 //--------------------------------------------------------------------------------------
 #define _XM_NO_INTRINSICS_
 
+#define WINDOW_WIDTH  800
+#define WINDOW_HEIGHT 600
+
 #define SEPERATION_MULTIPLIER	5.0f    //1.0f//12.0f
 #define ALIGNMENT_MULTPLIER		10.0f   //1.0f//8.0f
 #define COHESION_MULTIPLIER		5.0f    //1.0f//8.0f
@@ -53,8 +56,10 @@ void                    CleanupImGui();
 //--------------------------------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------------------------------
-HINSTANCE               g_hInst = nullptr;
-HWND                    g_hWnd = nullptr;
+
+wchar_t                 g_sAppTitle[100] = L"Refactored Boids";
+std::unique_ptr<AppWindow> g_pAppWindow;
+
 D3D_DRIVER_TYPE         g_driverType = D3D_DRIVER_TYPE_NULL;
 D3D_FEATURE_LEVEL       g_featureLevel = D3D_FEATURE_LEVEL_11_0;
 ID3D11Device*           g_pd3dDevice = nullptr;
@@ -218,9 +223,16 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     UNREFERENCED_PARAMETER( hPrevInstance );
     UNREFERENCED_PARAMETER( lpCmdLine );
 
-    if( FAILED( InitWindow( hInstance, nCmdShow ) ) )
-        return 0;
-	
+    AppWindow::AppWindowParams params;
+    params.pTitle = g_sAppTitle;
+    params.nWidth = WINDOW_WIDTH;
+    params.nHeight = WINDOW_HEIGHT;
+    params.nCmdShow = nCmdShow;
+
+    g_pAppWindow = std::make_unique<AppWindow>(hInstance, params);
+
+    /*if( FAILED( InitWindow( hInstance, nCmdShow ) ) )
+        return 0;*/
 
     if( FAILED( InitDevice() ) )
     {
@@ -250,53 +262,6 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
     return ( int )msg.wParam;
 }
-
-
-
-//--------------------------------------------------------------------------------------
-// Register class and create window
-//--------------------------------------------------------------------------------------
-HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
-{
-    // Register class
-    WNDCLASSEX wcex;
-    wcex.cbSize = sizeof( WNDCLASSEX );
-    wcex.style = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc = WndProc;
-    wcex.cbClsExtra = 0;
-    wcex.cbWndExtra = 0;
-    wcex.hInstance = hInstance;
-    wcex.hIcon = LoadIcon( hInstance, ( LPCTSTR )IDI_TUTORIAL1 );
-    wcex.hCursor = LoadCursor( nullptr, IDC_ARROW );
-    wcex.hbrBackground = ( HBRUSH )( COLOR_WINDOW + 1 );
-    wcex.lpszMenuName = nullptr;
-    wcex.lpszClassName = L"TutorialWindowClass";
-    wcex.hIconSm = LoadIcon( wcex.hInstance, ( LPCTSTR )IDI_TUTORIAL1 );
-    if( !RegisterClassEx( &wcex ) )
-        return E_FAIL;
-
-    // Create window
-	int width = 1024;
-	int height = 768;
-    g_hInst = hInstance;
-    RECT rc = { 0, 0, width, height };
-
-	g_viewWidth = width;
-	g_viewHeight = height;
-
-    AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
-    g_hWnd = CreateWindow( L"TutorialWindowClass", L"Direct3D 11 Tutorial 5",
-                           WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
-                           CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, hInstance,
-                           nullptr );
-    if( !g_hWnd )
-        return E_FAIL;
-
-    ShowWindow( g_hWnd, nCmdShow );
-
-    return S_OK;
-}
-
 
 //--------------------------------------------------------------------------------------
 // Helper for compiling shaders with D3DCompile
@@ -345,7 +310,8 @@ HRESULT     InitDevice()
     HRESULT hr = S_OK;
 
     RECT rc;
-    GetClientRect( g_hWnd, &rc );
+    //GetClientRect( g_hWnd, &rc );
+    GetClientRect(g_pAppWindow->GetHandle(), &rc);
     UINT width = rc.right - rc.left;
     UINT height = rc.bottom - rc.top;
 
@@ -423,15 +389,31 @@ HRESULT     InitDevice()
         }
 
         DXGI_SWAP_CHAIN_DESC1 sd = {};
-        sd.Width = width;
-        sd.Height = height;
+        //sd.Width = width;
+        //sd.Height = height;
+        sd.Width = g_pAppWindow->GetWidth();
+        sd.Height = g_pAppWindow->GetHeight();
         sd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         sd.SampleDesc.Count = 1;
         sd.SampleDesc.Quality = 0;
         sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         sd.BufferCount = 1;
 
-        hr = dxgiFactory2->CreateSwapChainForHwnd( g_pd3dDevice, g_hWnd, &sd, nullptr, nullptr, &g_pSwapChain1 );
+        //hr = dxgiFactory2->CreateSwapChainForHwnd( 
+        //    g_pd3dDevice, 
+        //    g_hWnd, 
+        //    &sd, 
+        //    0, 
+        //    0,
+        //    &g_pSwapChain1 );
+
+        hr = dxgiFactory2->CreateSwapChainForHwnd(
+            g_pd3dDevice,
+            g_pAppWindow->GetHandle(),
+            &sd,
+            0,
+            0,
+            &g_pSwapChain1);
         if (SUCCEEDED(hr))
         {
             hr = g_pSwapChain1->QueryInterface( __uuidof(IDXGISwapChain), reinterpret_cast<void**>(&g_pSwapChain) );
@@ -444,13 +426,16 @@ HRESULT     InitDevice()
         // DirectX 11.0 systems
         DXGI_SWAP_CHAIN_DESC sd = {};
         sd.BufferCount = 1;
-        sd.BufferDesc.Width = width;
-        sd.BufferDesc.Height = height;
+        //sd.BufferDesc.Width = width;
+        //sd.BufferDesc.Height = height;
+        sd.BufferDesc.Width = g_pAppWindow->GetWidth();
+        sd.BufferDesc.Height = g_pAppWindow->GetHeight();
         sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         sd.BufferDesc.RefreshRate.Numerator = 60;
         sd.BufferDesc.RefreshRate.Denominator = 1;
         sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-        sd.OutputWindow = g_hWnd;
+        //sd.OutputWindow = g_hWnd;
+        sd.OutputWindow = g_pAppWindow->GetHandle();
         sd.SampleDesc.Count = 1;
         sd.SampleDesc.Quality = 0;
         sd.Windowed = TRUE;
@@ -459,7 +444,10 @@ HRESULT     InitDevice()
     }
 
     // Note this tutorial doesn't handle full-screen swapchains so we block the ALT+ENTER shortcut
-    dxgiFactory->MakeWindowAssociation( g_hWnd, DXGI_MWA_NO_ALT_ENTER );
+    //dxgiFactory->MakeWindowAssociation( g_hWnd, DXGI_MWA_NO_ALT_ENTER );
+    dxgiFactory->MakeWindowAssociation(
+        g_pAppWindow->GetHandle(), 
+        DXGI_MWA_NO_ALT_ENTER);
 
     dxgiFactory->Release();
 
@@ -479,8 +467,10 @@ HRESULT     InitDevice()
 
     // Create depth stencil texture
     D3D11_TEXTURE2D_DESC descDepth = {};
-    descDepth.Width = width;
-    descDepth.Height = height;
+    //descDepth.Width = width;
+    //descDepth.Height = height;
+    descDepth.Width = g_pAppWindow->GetWidth();
+    descDepth.Height = g_pAppWindow->GetHeight();
     descDepth.MipLevels = 1;
     descDepth.ArraySize = 1;
     descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -490,7 +480,7 @@ HRESULT     InitDevice()
     descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
     descDepth.CPUAccessFlags = 0;
     descDepth.MiscFlags = 0;
-    hr = g_pd3dDevice->CreateTexture2D( &descDepth, nullptr, &g_pDepthStencil );
+    hr = g_pd3dDevice->CreateTexture2D( &descDepth, 0, &g_pDepthStencil );
     if( FAILED( hr ) )
         return hr;
 
@@ -507,8 +497,10 @@ HRESULT     InitDevice()
 
     // Setup the viewport
     D3D11_VIEWPORT vp;
-    vp.Width = (FLOAT)width;
-    vp.Height = (FLOAT)height;
+    //vp.Width = (FLOAT)width;
+    //vp.Height = (FLOAT)height;
+    vp.Width = (FLOAT)g_pAppWindow->GetWidth();
+    vp.Height = (FLOAT)g_pAppWindow->GetHeight();
     vp.MinDepth = 0.0f;
     vp.MaxDepth = 1.0f;
     vp.TopLeftX = 0;
@@ -872,7 +864,8 @@ void InitImGui()
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 
     ImGui::StyleColorsDark();
-    ImGui_ImplWin32_Init(g_hWnd);
+    //ImGui_ImplWin32_Init(g_hWnd);
+    ImGui_ImplWin32_Init(g_pAppWindow->GetHandle());
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pImmediateContext);
 }
 

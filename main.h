@@ -13,3 +13,4 @@
 #include "DrawableGameObject.h"
 #include "structures.h"
 
+#include "AppWindow.h"

@@ -27,6 +27,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="AppWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boid.h" />
@@ -70,6 +71,7 @@
     <ClInclude Include="imgui\imgui_internal.h">
       <Filter>ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="AppWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\floor.dds">
