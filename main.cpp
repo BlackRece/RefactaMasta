@@ -51,21 +51,8 @@ wchar_t                 g_sAppTitle[100] = L"Refactored Boids";
 std::unique_ptr<AppWindow> g_pAppWindow;
 std::unique_ptr<Graphics> g_pGraphics;
 
-D3D_DRIVER_TYPE         g_driverType = D3D_DRIVER_TYPE_NULL;
-D3D_FEATURE_LEVEL       g_featureLevel = D3D_FEATURE_LEVEL_11_0;
-ID3D11Device*           g_pd3dDevice = nullptr;
-ID3D11Device1*          g_pd3dDevice1 = nullptr;
-ID3D11DeviceContext*    g_pImmediateContext = nullptr;
-ID3D11DeviceContext1*   g_pImmediateContext1 = nullptr;
-IDXGISwapChain*         g_pSwapChain = nullptr;
-IDXGISwapChain1*        g_pSwapChain1 = nullptr;
-ID3D11RenderTargetView* g_pRenderTargetView = nullptr;
-ID3D11Texture2D*        g_pDepthStencil = nullptr;
-ID3D11DepthStencilView* g_pDepthStencilView = nullptr;
-
 ID3D11VertexShader*     g_pVertexShader = nullptr;
 ID3D11PixelShader*      g_pPixelShader = nullptr;
-ID3D11SamplerState *	g_pSamplerNormal = nullptr;
 ID3D11InputLayout*		g_pInputLayout = nullptr;
 
 ID3D11Buffer*           g_pConstantBuffer = nullptr;
@@ -74,9 +61,6 @@ ID3D11Buffer*           g_pLightConstantBuffer = nullptr;
 
 XMMATRIX                g_View;
 XMMATRIX                g_Projection;
-
-int						g_viewWidth;
-int						g_viewHeight;
 
 vecBoid					g_Boids;
 
@@ -226,8 +210,6 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
     placeFish();
 
-    HRESULT hr = S_OK;
-    
     InitImGui();
 
     // Main message loop
@@ -351,12 +333,6 @@ void Render()
 		return;
 	}
     
-    // Clear the back buffer
-    //g_pImmediateContext->ClearRenderTargetView( g_pRenderTargetView, Colors::AntiqueWhite );
-
-    // Clear the depth buffer to 1.0 (max depth)
-    //g_pImmediateContext->ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
-
     g_pGraphics->BeginDraw();
 
     Boid::updateStats(t);
@@ -375,12 +351,7 @@ void Render()
 		XMMATRIX vp = g_View * g_Projection;
 		//Boid* dob = (Boid*)g_Boids[i];
 
-		//dob->checkIsOnScreenAndFix(g_View, g_Projection);
         g_Boids[i]->checkIsOnScreenAndFix(g_View, g_Projection);
-
-		//setupTransformConstantBuffer(i);
-		//setupLightingConstantBuffer();
-		//setupMaterialConstantBuffer(i);
 
         g_pGraphics->SetupTransformConstantBuffer(g_Boids[i]->getTransform());
         g_pGraphics->SetupLightingConstantBuffer();
@@ -391,25 +362,13 @@ void Render()
             *g_Boids[i]->getTextureResourceView(), 
             *g_Boids[i]->getTextureSamplerState());
 
-		//g_pImmediateContext->VSSetShader( g_pVertexShader, nullptr, 0 );
-		//g_pImmediateContext->VSSetConstantBuffers( 0, 1, &g_pConstantBuffer );
-	
-		//g_pImmediateContext->PSSetShader( g_pPixelShader, nullptr, 0 );
-		//g_pImmediateContext->PSSetConstantBuffers(1, 1, &g_pMaterialConstantBuffer);
-		//g_pImmediateContext->PSSetConstantBuffers(2, 1, &g_pLightConstantBuffer);
-
-		//g_pImmediateContext->PSSetShaderResources(0, 1, g_Boids[i]->getTextureResourceView() );
-		//g_pImmediateContext->PSSetSamplers(0, 1, g_Boids[i]->getTextureSamplerState());
-
 		// draw 
-		//g_Boids[i]->draw(g_pImmediateContext);
         g_Boids[i]->draw(g_pGraphics->GetContext().Get());
 	}
 	
     RenderImGui();
 
     // Present our back buffer to our front buffer
-    //g_pSwapChain->Present( 0, 0 );
     g_pGraphics->EndDraw();
 }
 
@@ -431,7 +390,6 @@ void InitImGui()
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 
     ImGui::StyleColorsDark();
-    //ImGui_ImplWin32_Init(g_hWnd);
     ImGui_ImplWin32_Init(g_pAppWindow->GetHandle());
     ImGui_ImplDX11_Init(
         g_pGraphics->GetDevice().Get(),
