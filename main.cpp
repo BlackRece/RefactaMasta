@@ -325,17 +325,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
     return 0;
 }
 
-void setupTransformConstantBuffer(const unsigned int index)
-{
-	ConstantBuffer cb1;
-	cb1.mWorld = XMMatrixTranspose(XMLoadFloat4x4(g_Boids[index]->getTransform()));
-	cb1.mView = XMMatrixTranspose(g_View);
-	cb1.mProjection = XMMatrixTranspose(g_Projection);
-	cb1.vOutputColor = XMFLOAT4(0, 0, 0, 0);
-	//g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb1, 0, 0);
-    g_pGraphics->GetContext()->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb1, 0, 0);
-}
-
 //--------------------------------------------------------------------------------------
 // Render a frame
 //--------------------------------------------------------------------------------------
