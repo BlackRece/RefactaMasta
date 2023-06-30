@@ -39,7 +39,6 @@ DirectX::XMFLOAT4 g_EyePosition(0.0f, 0, -200, 1.0f);
 //--------------------------------------------------------------------------------------
 // Forward declarations
 //--------------------------------------------------------------------------------------
-HRESULT		            InitWorld(int width, int height);
 void		            CleanupDevice();
 LRESULT CALLBACK        WndProc(HWND, UINT, WPARAM, LPARAM);
 void		            Render();
@@ -107,7 +106,6 @@ Boid* createFish(XMFLOAT3 position, bool shark)
         fish->setAmbientColour(XMFLOAT4(255.0f, 0.0f, 0.0f, 1.0f));
     }
 
-    //hr = fish->initMesh(g_pd3dDevice, g_pImmediateContext);
     hr = fish->initMesh(g_pGraphics->GetDevice(), g_pGraphics->GetContext());
     
     if (FAILED(hr))
@@ -235,15 +233,7 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     placeFish();
 
     HRESULT hr = S_OK;
-
-    //hr = InitWorld(g_pAppWindow->GetWidth(), g_pAppWindow->GetHeight());
-    //if (FAILED(hr))
-    //{
-    //    MessageBox(nullptr,
-    //        L"Failed to initialise world.", L"Error", MB_OK);
-    //    return 0;
-    //}
-
+    
     InitImGui();
 
     // Main message loop
@@ -304,25 +294,6 @@ HRESULT     CompileShaderFromFile( const WCHAR* szFileName, LPCSTR szEntryPoint,
 
     return S_OK;
 }
-
-// ***************************************************************************************
-// InitWorld
-// ***************************************************************************************
-HRESULT		InitWorld(int width, int height)
-{
-	// Initialize the view matrix
-	XMVECTOR Eye = XMLoadFloat4(&g_EyePosition);
-	XMVECTOR At = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	g_View = XMMatrixLookAtLH(Eye, At, Up);
-
-	// Initialize the projection matrix
-	g_Projection = XMMatrixPerspectiveFovLH(XM_PIDIV2, width / (FLOAT)height, 0.01f, 1000.0f);
-
-
-	return S_OK;
-}
-
 
 //--------------------------------------------------------------------------------------
 // Clean up the objects we've created
