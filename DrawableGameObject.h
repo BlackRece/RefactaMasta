@@ -8,6 +8,7 @@
 #include "resource.h"
 #include <iostream>
 #include "structures.h"
+#include <wrl.h>
 
 /*
  movement
@@ -17,8 +18,7 @@
 */
 
 using namespace DirectX;
-
-
+namespace wrl = Microsoft::WRL;
 
 struct SimpleVertex
 {
@@ -34,6 +34,9 @@ public:
 	virtual ~DrawableGameObject();
 
 	virtual HRESULT						initMesh(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext);
+	virtual HRESULT						initMesh(
+		wrl::ComPtr<ID3D11Device> pDevice,
+		wrl::ComPtr<ID3D11DeviceContext> pContext);
 	void								update(float t);
 	void								draw(ID3D11DeviceContext* pContext);
 	ID3D11Buffer*						getVertexBuffer() { return m_pVertexBuffer; }

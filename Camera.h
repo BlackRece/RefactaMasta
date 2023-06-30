@@ -18,7 +18,9 @@ public:
 	DirectX::XMFLOAT3 GetRotation() const;
 	void Render();
 	XMFLOAT4X4 GetView() const;
+	XMMATRIX GetViewMatrix() const;
 	XMFLOAT4X4 GetProjection() const;
+	XMMATRIX GetProjectionMatrix() const;
 
 private:
 	XMFLOAT4 m_position;

@@ -11,6 +11,7 @@
 #include <iostream>
 
 #include "DrawableGameObject.h"
-#include "structures.h"
+//#include "structures.h"
 
 #include "AppWindow.h"
+#include "Graphics.h"

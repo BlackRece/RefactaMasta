@@ -29,7 +29,17 @@ XMFLOAT4X4 Camera::GetView() const
 	return m_view;
 }
 
+XMMATRIX Camera::GetViewMatrix() const
+{
+	return XMLoadFloat4x4(&m_view);
+}
+
 XMFLOAT4X4 Camera::GetProjection() const
 {
 	return m_projection;
+}
+
+XMMATRIX Camera::GetProjectionMatrix() const
+{
+	return XMLoadFloat4x4(&m_projection);
 }

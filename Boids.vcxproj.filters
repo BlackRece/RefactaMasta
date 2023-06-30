@@ -28,6 +28,9 @@
       <Filter>ImGui</Filter>
     </ClCompile>
     <ClCompile Include="AppWindow.cpp" />
+    <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="Result.cpp" />
+    <ClCompile Include="Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boid.h" />
@@ -72,6 +75,10 @@
       <Filter>ImGui</Filter>
     </ClInclude>
     <ClInclude Include="AppWindow.h" />
+    <ClInclude Include="Graphics.h" />
+    <ClInclude Include="Result.h" />
+    <ClInclude Include="ConstantBuffers.h" />
+    <ClInclude Include="Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\floor.dds">
