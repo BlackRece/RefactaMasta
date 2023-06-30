@@ -180,7 +180,7 @@ void placeFish()
 
     g_velocity = VELOCITY_MULTIPLIER;
 
-    int amount = 100;
+    int amount = 10;// 100;
     int radius = 100;
 
     squareFormation(amount);

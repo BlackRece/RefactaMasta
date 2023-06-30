@@ -78,6 +78,8 @@ protected:
 
 	XMFLOAT3							addWeightedFloat3(XMFLOAT3& dest, XMFLOAT3& source, const float multiplier);
 
+	float								RandomFloat(const float fMin, const float fMax);
+
 	XMFLOAT3							m_direction;
 	XMFLOAT3							m_velocity;
 	float								m_speed;

@@ -22,11 +22,12 @@ Boid::~Boid()
 
 void Boid::createRandomDirection()
 {
-	float x = (float)(rand() % 10);
-	x -= 5;
-	float y = (float)(rand() % 10);
-	y -= 5;
-	float z = 0;
+	float x = 0.0, y = 0.0, z = 0.0;
+	while (x == 0 && y == 0)
+	{
+		x = RandomFloat(-5.f, 5.f);
+		y = RandomFloat(-5.f, 5.f);
+	}
 	setDirection(XMFLOAT3(x, y, z));
 }
 
@@ -83,15 +84,11 @@ void Boid::update(float t, vecBoid* boidList)
 	m_direction = addFloat3(m_direction, vDirection);
 	
 	if (magnitudeFloat3(m_direction) > 0.0f)
-	{
-		XMFLOAT3 vVelocity = multiplyFloat3(m_direction, fSpeed);
-		m_direction = normaliseFloat3(vVelocity);
-		m_position = addFloat3(m_position, m_direction);
-	}
-	else
-	{
 		createRandomDirection();
-	}
+
+	XMFLOAT3 vVelocity = multiplyFloat3(m_direction, fSpeed);
+	m_direction = normaliseFloat3(vVelocity);
+	m_position = addFloat3(m_position, m_direction);
 	
 	DrawableGameObject::update(t);
 }
@@ -102,6 +99,12 @@ XMFLOAT3 Boid::addWeightedFloat3(XMFLOAT3& dest, XMFLOAT3& source, const float m
 	return addFloat3(dest, vWeighted);
 	//dest = addFloat3(dest, vWeighted);
 	//return normaliseFloat3(dest);
+}
+
+float Boid::RandomFloat(const float fMin, const float fMax)
+{
+	float fRandom = (float)rand() / (float)RAND_MAX;
+	return fMin + fRandom * (fMax - fMin);
 }
 
 XMFLOAT3 Boid::calculateFlockingVector(vecBoid* boidList) {
@@ -425,7 +428,7 @@ void Boid::checkIsOnScreenAndFix(const XMMATRIX&  view, const XMMATRIX&  proj)
 		}
 
 		// throw a bit of randomness into the mix
-		//createRandomDirection();
+		createRandomDirection();
 	}
 
 	// method 1 - appear on the other side
