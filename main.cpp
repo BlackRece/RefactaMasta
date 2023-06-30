@@ -369,31 +369,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 }
 
 
-void setupLightingConstantBuffer()
-{
-	XMFLOAT4 LightPosition(g_EyePosition);
-
-	Light light;
-	light.Enabled = static_cast<int>(true);
-	light.LightType = PointLight;
-	light.Color = XMFLOAT4(Colors::White);
-	light.SpotAngle = XMConvertToRadians(45.0f); // never used
-	light.ConstantAttenuation = 0.005f;
-	light.LinearAttenuation =  0.0014f;
-	light.QuadraticAttenuation = 0.000007f;
-
-	light.Position = LightPosition;
-	//XMVECTOR LightDirection = XMVectorSet(-LightPosition.x, -LightPosition.y, -LightPosition.z, 0.0f);
-	//LightDirection = XMVector3Normalize(LightDirection);
-	//XMStoreFloat4(&light.Direction, LightDirection);
-
-	LightPropertiesConstantBuffer lightProperties;
-	lightProperties.EyePosition = LightPosition;
-	lightProperties.Lights[0] = light;
-	g_pImmediateContext->UpdateSubresource(g_pLightConstantBuffer, 0, nullptr, &lightProperties, 0, 0);
-    //g_pGraphics->GetContext()->UpdateSubresource(g_pLightConstantBuffer, 0, nullptr, &lightProperties, 0, 0);
-}
-
 void setupMaterialConstantBuffer(const unsigned int index)
 {
 	MaterialPropertiesConstantBuffer mcb = g_Boids[index]->getMaterial();
