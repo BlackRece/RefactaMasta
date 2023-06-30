@@ -33,7 +33,6 @@ public:
 	DrawableGameObject();
 	virtual ~DrawableGameObject();
 
-	virtual HRESULT						initMesh(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pContext);
 	virtual HRESULT						initMesh(
 		wrl::ComPtr<ID3D11Device> pDevice,
 		wrl::ComPtr<ID3D11DeviceContext> pContext);
@@ -52,9 +51,7 @@ public:
 	void								setScale(const float scale);
 	void								setAmbientColour(XMFLOAT4 colour);
 
-
-
-	protected:
+protected:
 	
 	XMFLOAT4X4							m_World;
 	ID3D11Buffer*						m_pVertexBuffer;
