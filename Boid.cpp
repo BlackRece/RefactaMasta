@@ -83,7 +83,7 @@ void Boid::update(float t, vecBoid* boidList)
 	
 	m_direction = addFloat3(m_direction, vDirection);
 	
-	if (magnitudeFloat3(m_direction) > 0.0f)
+	if (magnitudeFloat3(m_direction) == 0.0f)
 		createRandomDirection();
 
 	XMFLOAT3 vVelocity = multiplyFloat3(m_direction, fSpeed);
@@ -114,23 +114,20 @@ XMFLOAT3 Boid::calculateFlockingVector(vecBoid* boidList) {
 	XMFLOAT3  vAlignment = calculateAlignmentVector(boidList);
 	XMFLOAT3  vCohesion = calculateCohesionVector(boidList);
 
-	// set me
-	//XMFLOAT3 vDesiredDirection = XMFLOAT3(0, 0, 0);
-	//if (vDesiredDirection.x != 0)
-	//	vDesiredDirection.x = 0;
-	//if (vDesiredDirection.y != 0)
-	//	vDesiredDirection.y = 0;
-	//if (vDesiredDirection.z != 0)
-	//	vDesiredDirection.z = 0;
-
 	vSeparation = multiplyFloat3(vSeparation, m_seperationMultiplier);
 	vAlignment = multiplyFloat3(vAlignment, m_alignmentMultiplier);
 	vCohesion = multiplyFloat3(vCohesion, m_cohesionMultiplier);
 
 	XMFLOAT3 vDirection = XMFLOAT3 (vSeparation);
-	//vDesiredDirection = addFloat3(vDesiredDirection, vSeparation);
 	vDirection = addFloat3(vDirection, vAlignment);
 	vDirection = addFloat3(vDirection, vCohesion);
+
+	if (vDirection.z > 1 || vDirection.z < -1)
+		vDirection.z = vDirection.z > 0
+		? vDirection.z--
+		: vDirection.z++;
+	else
+		vDirection.z = 0;
 
 	return vDirection;
 }
@@ -160,7 +157,7 @@ XMFLOAT3 Boid::calculatePredatorVector(vecBoid* boidList)
 	//TODO: can't delete! must mark for deletion so that another process can remove this boid.
 	if (nearest != nullptr && nearestDistance <= 5.0f)
 	{
-		nearest->setPosition(XMFLOAT3(0,0,0));
+		nearest->setPosition(XMFLOAT3(0,0,-100));
 		m_stats.AddBoid();
 	}
 	
