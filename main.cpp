@@ -325,14 +325,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
     return 0;
 }
 
-
-void setupMaterialConstantBuffer(const unsigned int index)
-{
-	MaterialPropertiesConstantBuffer mcb = g_Boids[index]->getMaterial();
-	g_pImmediateContext->UpdateSubresource(g_pMaterialConstantBuffer, 0, nullptr, &mcb, 0, 0);
-    //g_pGraphics->GetContext()->UpdateSubresource(g_pMaterialConstantBuffer, 0, nullptr, &mcb, 0, 0);
-}
-
 void setupTransformConstantBuffer(const unsigned int index)
 {
 	ConstantBuffer cb1;
