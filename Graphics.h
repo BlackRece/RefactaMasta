@@ -43,7 +43,7 @@ public:
 
 	void SetupLightingConstantBuffer();
 	void SetupMaterialConstantBuffer(MaterialPropertiesConstantBuffer material);
-	void SetupTransformConstantBuffer(XMFLOAT4X4* transform);
+	void SetupTransformConstantBuffer(const XMFLOAT4X4& pTransform, const Camera& pCamera);
 	void SetupConstantBuffers(ID3D11ShaderResourceView* pShaderResource, ID3D11SamplerState* pSamplerState);
 
 private:
