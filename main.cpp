@@ -50,6 +50,7 @@ void                    CleanupImGui();
 wchar_t                 g_sAppTitle[100] = L"Refactored Boids";
 std::unique_ptr<AppWindow> g_pAppWindow;
 std::unique_ptr<Graphics> g_pGraphics;
+std::unique_ptr<Camera> g_pCamera;
 
 ID3D11VertexShader*     g_pVertexShader = nullptr;
 ID3D11PixelShader*      g_pPixelShader = nullptr;
@@ -208,6 +209,8 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     g_pGraphics = std::make_unique<Graphics>(g_pAppWindow->GetHandle());
     g_pGraphics->Initialise(g_pAppWindow->GetWidth(), g_pAppWindow->GetHeight());
 
+    g_pCamera = std::make_unique<Camera>(g_pAppWindow->GetWidth(), g_pAppWindow->GetHeight());
+
     placeFish();
 
     InitImGui();
@@ -232,7 +235,6 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
     return ( int )msg.wParam;
 }
-
 
 //--------------------------------------------------------------------------------------
 // Clean up the objects we've created
@@ -346,12 +348,18 @@ void Render()
 		
 		g_Boids[i]->update(t, &g_Boids);
         
-        g_View = g_pGraphics->GetViewMatrix();
-        g_Projection = g_pGraphics->GetProjectionMatrix();
-		XMMATRIX vp = g_View * g_Projection;
+  //      g_View = g_pGraphics->GetViewMatrix();
+  //      g_Projection = g_pGraphics->GetProjectionMatrix();
+		//XMMATRIX vp = g_View * g_Projection;
 		//Boid* dob = (Boid*)g_Boids[i];
 
-        g_Boids[i]->checkIsOnScreenAndFix(g_View, g_Projection);
+        //g_Boids[i]->checkIsOnScreenAndFix(
+        //    g_pGraphics->GetViewMatrix(),
+        //    g_pGraphics->GetProjectionMatrix());
+
+        g_Boids[i]->checkIsOnScreenAndFix(
+            XMMatrixTranspose(XMLoadFloat4x4(g_pCamera->GetView())),
+            XMMatrixTranspose(XMLoadFloat4x4(g_pCamera->GetProjection())));
 
         g_pGraphics->SetupTransformConstantBuffer(g_Boids[i]->getTransform());
         g_pGraphics->SetupLightingConstantBuffer();

@@ -470,9 +470,6 @@ void Graphics::SetupMaterialConstantBuffer(MaterialPropertiesConstantBuffer mate
 
 void Graphics::SetupTransformConstantBuffer(XMFLOAT4X4* transform)
 {
-    //XMFLOAT4X4 view = m_pCamera->GetView();
-    //XMFLOAT4X4 projection = m_pCamera->GetProjection();
-
     ConstantBuffer cb1;
     cb1.mWorld = XMMatrixTranspose(XMLoadFloat4x4(transform));
     cb1.mView = XMMatrixTranspose(XMLoadFloat4x4(m_pCamera->GetView()));

@@ -15,3 +15,4 @@
 
 #include "AppWindow.h"
 #include "Graphics.h"
+#include "Camera.h"
