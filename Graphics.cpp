@@ -431,7 +431,7 @@ Result Graphics::CreateConstantBuffers()
     return Result(true, this);
 }
 
-void Graphics::SetupLightingConstantBuffer()
+void Graphics::SetupLightingConstantBuffer(const Camera& pCamera)
 {
     //XMFLOAT4 LightPosition(g_EyePosition);
 
@@ -445,13 +445,13 @@ void Graphics::SetupLightingConstantBuffer()
     light.QuadraticAttenuation = 0.000007f;
 
     //light.Position = LightPosition;
-    light.Position = m_pCamera->GetPosition();
+    light.Position = pCamera.GetPosition();
     //XMVECTOR LightDirection = XMVectorSet(-LightPosition.x, -LightPosition.y, -LightPosition.z, 0.0f);
     //LightDirection = XMVector3Normalize(LightDirection);
     //XMStoreFloat4(&light.Direction, LightDirection);
 
     LightPropertiesConstantBuffer lightProperties;
-    lightProperties.EyePosition = m_pCamera->GetPosition();
+    lightProperties.EyePosition = pCamera.GetPosition();
     lightProperties.Lights[0] = light;
     //g_pImmediateContext->UpdateSubresource(g_pLightConstantBuffer, 0, nullptr, &lightProperties, 0, 0);
     m_pDeviceContext->UpdateSubresource(m_pLightConstantBuffer.Get(), 0, 0, &lightProperties, 0, 0);

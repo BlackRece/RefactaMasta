@@ -361,8 +361,10 @@ void Render()
             XMMatrixTranspose(XMLoadFloat4x4(g_pCamera->GetView())),
             XMMatrixTranspose(XMLoadFloat4x4(g_pCamera->GetProjection())));
 
-        g_pGraphics->SetupTransformConstantBuffer(*g_Boids[i]->getTransform(), *g_pCamera.get());
-        g_pGraphics->SetupLightingConstantBuffer();
+        g_pGraphics->SetupTransformConstantBuffer(
+            *g_Boids[i]->getTransform(), 
+            *g_pCamera.get());
+        g_pGraphics->SetupLightingConstantBuffer(*g_pCamera.get());
         g_pGraphics->SetupMaterialConstantBuffer(g_Boids[i]->getMaterial());
 
 		// Render a cube

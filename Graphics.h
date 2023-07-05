@@ -41,7 +41,7 @@ public:
 	XMMATRIX GetViewMatrix() const;
 	XMMATRIX GetProjectionMatrix() const;
 
-	void SetupLightingConstantBuffer();
+	void SetupLightingConstantBuffer(const Camera& pCamera);
 	void SetupMaterialConstantBuffer(MaterialPropertiesConstantBuffer material);
 	void SetupTransformConstantBuffer(const XMFLOAT4X4& pTransform, const Camera& pCamera);
 	void SetupConstantBuffers(ID3D11ShaderResourceView* pShaderResource, ID3D11SamplerState* pSamplerState);
