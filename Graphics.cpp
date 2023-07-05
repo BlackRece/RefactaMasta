@@ -470,13 +470,13 @@ void Graphics::SetupMaterialConstantBuffer(MaterialPropertiesConstantBuffer mate
 
 void Graphics::SetupTransformConstantBuffer(XMFLOAT4X4* transform)
 {
-    XMFLOAT4X4 view = m_pCamera->GetView();
-    XMFLOAT4X4 projection = m_pCamera->GetProjection();
+    //XMFLOAT4X4 view = m_pCamera->GetView();
+    //XMFLOAT4X4 projection = m_pCamera->GetProjection();
 
     ConstantBuffer cb1;
     cb1.mWorld = XMMatrixTranspose(XMLoadFloat4x4(transform));
-    cb1.mView = XMMatrixTranspose(XMLoadFloat4x4(&view));
-    cb1.mProjection = XMMatrixTranspose(XMLoadFloat4x4(&projection));
+    cb1.mView = XMMatrixTranspose(XMLoadFloat4x4(m_pCamera->GetView()));
+    cb1.mProjection = XMMatrixTranspose(XMLoadFloat4x4(m_pCamera->GetProjection()));
     cb1.vOutputColor = XMFLOAT4(0, 0, 0, 0);
     m_pDeviceContext->UpdateSubresource(m_pConstantBuffer.Get(), 0, 0, &cb1, 0, 0);
 }
