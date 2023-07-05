@@ -11,35 +11,40 @@ Camera::Camera(int nWidth, int nHeight)
 	m_viewMatrix = XMMatrixLookAtLH(m_eye, m_at, m_up);
 	m_projectionMatrix = XMMatrixPerspectiveFovLH(XM_PIDIV2, (float)nWidth / (float)nHeight, 0.01f, 1000.0f);
 
-	XMStoreFloat4x4(&m_view, m_viewMatrix);
-	XMStoreFloat4x4(&m_projection, m_projectionMatrix);
+	m_pView = std::unique_ptr<XMFLOAT4X4>(new XMFLOAT4X4());
+	XMStoreFloat4x4(m_pView.get(), m_viewMatrix);
+
+	m_pProjection = std::unique_ptr<XMFLOAT4X4>(new XMFLOAT4X4());
+	XMStoreFloat4x4(m_pProjection.get(), m_projectionMatrix);
 }
 
 Camera::~Camera()
 {
 }
 
+
 XMFLOAT4 Camera::GetPosition() const
 {
 	return m_position;
 }
 
-XMFLOAT4X4 Camera::GetView() const
+
+XMFLOAT4X4* Camera::GetView() const
 {
-	return m_view;
+	return m_pView.get();
 }
 
 XMMATRIX Camera::GetViewMatrix() const
 {
-	return XMLoadFloat4x4(&m_view);
+	return XMLoadFloat4x4(m_pView.get());
 }
 
-XMFLOAT4X4 Camera::GetProjection() const
+XMFLOAT4X4* Camera::GetProjection() const
 {
-	return m_projection;
+	return m_pProjection.get();
 }
 
 XMMATRIX Camera::GetProjectionMatrix() const
 {
-	return XMLoadFloat4x4(&m_projection);
+	return XMLoadFloat4x4(m_pProjection.get());
 }

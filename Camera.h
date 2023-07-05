@@ -3,6 +3,7 @@
 
 //#include <d3d11_1.h>
 #include <DirectXMath.h>
+#include <memory>
 
 using namespace DirectX;
 
@@ -17,9 +18,9 @@ public:
 	DirectX::XMFLOAT4 GetPosition() const;
 	DirectX::XMFLOAT3 GetRotation() const;
 	void Render();
-	XMFLOAT4X4 GetView() const;
+	XMFLOAT4X4* GetView() const;
 	XMMATRIX GetViewMatrix() const;
-	XMFLOAT4X4 GetProjection() const;
+	XMFLOAT4X4* GetProjection() const;
 	XMMATRIX GetProjectionMatrix() const;
 
 private:
@@ -31,8 +32,8 @@ private:
 	XMMATRIX m_viewMatrix;
 	XMMATRIX m_projectionMatrix;
 
-	XMFLOAT4X4 m_view;
-	XMFLOAT4X4 m_projection;
+	std::unique_ptr<XMFLOAT4X4> m_pView;
+	std::unique_ptr<XMFLOAT4X4> m_pProjection;
 };
 
 #endif // !CAMERA_H
