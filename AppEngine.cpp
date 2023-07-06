@@ -26,25 +26,46 @@ void AppEngine::Start()
 
 void AppEngine::Run()
 {
-    // Main message loop
-    MSG msg = { 0 };
-    while (WM_QUIT != msg.message)
+    while (m_bRunning)
     {
-        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-        else
-        {
-            Update();
-            Render();
-        }
+        ProcessMessages();
+        // TODO: add call to change state
+        Update();
+        Render();
     }
+
+    // TODO: deactivate current state
+    //if (currentState != 0)
+    //    currentState->OnDeactivate();
 }
 
 void AppEngine::Stop()
 {
+}
+
+void AppEngine::ProcessMessages()
+{
+    MSG msg;
+    ZeroMemory(&msg, sizeof(MSG));
+
+    if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+    {
+        switch (msg.message)
+        {
+        case WM_QUIT:
+			m_bRunning = false;
+			break;
+        case WM_DESTROY:
+                PostQuitMessage();
+                break;
+        default:
+            /* do nothing */
+            break;
+        }
+
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
 }
 
 void AppEngine::Update()

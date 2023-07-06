@@ -364,6 +364,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="DrawableGameObject.cpp" />
+    <ClCompile Include="FrameTimer.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -384,6 +385,7 @@
     <ClInclude Include="ConstantBuffers.h" />
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="DrawableGameObject.h" />
+    <ClInclude Include="FrameTimer.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="ImGui.h" />
     <ClInclude Include="imgui\imconfig.h" />

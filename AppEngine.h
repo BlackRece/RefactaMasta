@@ -25,10 +25,12 @@ public:
 	void Stop();
 
 private:
+	void ProcessMessages();
 	void Update();
 	void Render();
 
 	bool m_initialized;
+	bool m_bRunning;
 
 	// TODO: Instantiate a Graphics object
 	std::unique_ptr<Graphics> m_pGraphics;
