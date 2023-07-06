@@ -14,6 +14,8 @@ AppEngine::AppEngine(AppEngineParams params)
     m_pGraphics->Initialise(params.nWidth, params.nHeight);
 
     m_pCamera = std::make_unique<Camera>(params.nWidth, params.nHeight);
+
+    m_pTimer = std::make_unique<FrameTimer>(DEFAULT_FPS);
 }
 
 AppEngine::~AppEngine()
@@ -26,6 +28,8 @@ void AppEngine::Start()
 
 void AppEngine::Run()
 {
+    m_pTimer->Start();
+
     while (m_bRunning)
     {
         ProcessMessages();
@@ -41,6 +45,7 @@ void AppEngine::Run()
 
 void AppEngine::Stop()
 {
+    m_pTimer->Stop();
 }
 
 void AppEngine::ProcessMessages()
@@ -70,26 +75,9 @@ void AppEngine::ProcessMessages()
 
 void AppEngine::Update()
 {
-    // Update our time
-    static float t = 0.0f;
-    static ULONGLONG timeStart = 0;
-    ULONGLONG timeCur = GetTickCount64();
-    if (timeStart == 0)
-        timeStart = timeCur;
-    t = (timeCur - timeStart) / 1000.0f;
-    timeStart = timeCur;
-
-    float FPS60 = 1.0f / 60.0f;
-    static float cummulativeTime = 0;
-
-    // cap the framerate at 60 fps 
-    cummulativeTime += t;
-    if (cummulativeTime >= FPS60) {
-        cummulativeTime = cummulativeTime - FPS60;
-    }
-    else {
+    if(m_pTimer->Tick())
         return;
-    }
+
 }
 
 void AppEngine::Render()

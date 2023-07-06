@@ -6,6 +6,9 @@
 #include "Graphics.h"
 #include "Camera.h"
 #include "Light.h"
+#include "FrameTimer.h"
+
+#define DEFAULT_FPS 60.0f
 
 class AppEngine
 {
@@ -44,7 +47,7 @@ private:
 	// TODO: Instantiate a Light object
 	//std::unique_ptr<Light> m_pLight;
 
-
+	std::unique_ptr<FrameTimer> m_pTimer;
 };
 
 #endif // !APPENGINE_H
