@@ -52,6 +52,7 @@ std::unique_ptr<AppWindow> g_pAppWindow;
 std::unique_ptr<Graphics> g_pGraphics;
 std::unique_ptr<Camera> g_pCamera;
 
+// These are no longer used but haven't been removed as referenced in CleanupDevice() method
 ID3D11VertexShader*     g_pVertexShader = nullptr;
 ID3D11PixelShader*      g_pPixelShader = nullptr;
 ID3D11InputLayout*		g_pInputLayout = nullptr;
@@ -59,9 +60,7 @@ ID3D11InputLayout*		g_pInputLayout = nullptr;
 ID3D11Buffer*           g_pConstantBuffer = nullptr;
 ID3D11Buffer*           g_pMaterialConstantBuffer = nullptr;
 ID3D11Buffer*           g_pLightConstantBuffer = nullptr;
-
-XMMATRIX                g_View;
-XMMATRIX                g_Projection;
+// <-- End of unused variables
 
 vecBoid					g_Boids;
 
@@ -198,6 +197,7 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     UNREFERENCED_PARAMETER( hPrevInstance );
     UNREFERENCED_PARAMETER( lpCmdLine );
 
+    // TODO: move to AppEngine class
     AppWindow::AppWindowParams params;
     params.pTitle = g_sAppTitle;
     params.nWidth = WINDOW_WIDTH;
@@ -210,11 +210,14 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     g_pGraphics->Initialise(g_pAppWindow->GetWidth(), g_pAppWindow->GetHeight());
 
     g_pCamera = std::make_unique<Camera>(g_pAppWindow->GetWidth(), g_pAppWindow->GetHeight());
-
+    
+    // TODO: move to a gamestate class
     placeFish();
 
+    // TODO: move to an ImGui class
     InitImGui();
 
+    // TODO: move to AppEngine class
     // Main message loop
     MSG msg = {0};
     while( WM_QUIT != msg.message )
@@ -233,6 +236,7 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     CleanupImGui();
     CleanupDevice();
 
+    // TODO: return a result from AppEngine class
     return ( int )msg.wParam;
 }
 
