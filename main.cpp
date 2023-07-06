@@ -62,6 +62,7 @@ ID3D11Buffer*           g_pMaterialConstantBuffer = nullptr;
 ID3D11Buffer*           g_pLightConstantBuffer = nullptr;
 // <-- End of unused variables
 
+// TODO: move to a game class that inherits from a gamestate class
 vecBoid					g_Boids;
 
 constexpr auto          g_PI = 3.14159265358979323846;
@@ -187,6 +188,7 @@ void placeFish()
     //circleFormation(radius, amount);
     //spiralFormation(10, radius, 10);
 }
+// <-- End of game class
 
 //--------------------------------------------------------------------------------------
 // Entry point to the program. Initializes everything and goes into a message processing 

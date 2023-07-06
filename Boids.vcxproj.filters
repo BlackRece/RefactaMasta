@@ -31,6 +31,7 @@
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Result.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boid.h" />
@@ -79,6 +80,7 @@
     <ClInclude Include="Result.h" />
     <ClInclude Include="ConstantBuffers.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Keyboard.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\floor.dds">
