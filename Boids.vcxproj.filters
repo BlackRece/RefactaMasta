@@ -33,6 +33,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="FrameTimer.cpp" />
+    <ClCompile Include="Light.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boid.h" />
@@ -83,6 +84,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="FrameTimer.h" />
+    <ClInclude Include="Light.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\floor.dds">

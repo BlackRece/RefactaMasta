@@ -51,6 +51,8 @@ wchar_t                 g_sAppTitle[100] = L"Refactored Boids";
 std::unique_ptr<AppWindow> g_pAppWindow;
 std::unique_ptr<Graphics> g_pGraphics;
 std::unique_ptr<Camera> g_pCamera;
+//std::unique_ptr<Light> g_pLight;
+std::unique_ptr<FrameTimer> g_pTimer;
 
 // These are no longer used but haven't been removed as referenced in CleanupDevice() method
 ID3D11VertexShader*     g_pVertexShader = nullptr;
@@ -212,6 +214,9 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     g_pGraphics->Initialise(g_pAppWindow->GetWidth(), g_pAppWindow->GetHeight());
 
     g_pCamera = std::make_unique<Camera>(g_pAppWindow->GetWidth(), g_pAppWindow->GetHeight());
+
+    const float fFPS = 60.0f;
+    g_pTimer = std::make_unique<FrameTimer>(fFPS);
     
     // TODO: move to a gamestate class
     placeFish();
@@ -220,6 +225,7 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     InitImGui();
 
     // TODO: move to AppEngine class
+    g_pTimer->Start();
     // Main message loop
     MSG msg = {0};
     while( WM_QUIT != msg.message )
@@ -321,6 +327,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 void Render()
 {
     // Update our time
+    /*
     static float t = 0.0f;
     static ULONGLONG timeStart = 0;
     ULONGLONG timeCur = GetTickCount64();
@@ -340,6 +347,12 @@ void Render()
 	else {
 		return;
 	}
+    */
+
+    if (!g_pTimer->Tick())
+        return;
+
+    float t = g_pTimer->GetDelta();
     
     g_pGraphics->BeginDraw();
 
