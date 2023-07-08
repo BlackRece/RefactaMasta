@@ -1,26 +1,26 @@
-#include "Boid.h"
+#include "Zoid.h"
 
-#define NEARBY_DISTANCE			20.0f	// how far boids can see
+#define NEARBY_DISTANCE			20.0f	// how far Zoids can see
 
-BoidData Boid::m_stats;
+ZoidData Zoid::m_stats;
 
-Boid::Boid(XMFLOAT3 position)
+Zoid::Zoid(XMFLOAT3 position)
 {
 	m_position = position;
 	//m_direction = XMFLOAT3(0, 1, 0);
 	createRandomDirection();
 	if (isnan(m_direction.x))
 		m_direction = XMFLOAT3(0, 1, 0);
-		//m_direction = m_direction;
+	//m_direction = m_direction;
 
 	m_speed = 100;
 }
 
-Boid::~Boid()
+Zoid::~Zoid()
 {
 }
 
-void Boid::createRandomDirection()
+void Zoid::createRandomDirection()
 {
 	float x = 0.0, y = 0.0, z = 0.0;
 	while (x == 0 && y == 0)
@@ -31,47 +31,47 @@ void Boid::createRandomDirection()
 	setDirection(XMFLOAT3(x, y, z));
 }
 
-void Boid::setDirection(XMFLOAT3 direction)
+void Zoid::setDirection(XMFLOAT3 direction)
 {
 	XMVECTOR v = XMLoadFloat3(&direction);
 	v = XMVector3Normalize(v);
 	XMStoreFloat3(&m_direction, v);
 }
 
-void Boid::setSeperationMultiplier(const float value)
+void Zoid::setSeperationMultiplier(const float value)
 {
 	m_seperationMultiplier = value;
 }
 
-void Boid::setAlignmentMultiplier(const float value)
+void Zoid::setAlignmentMultiplier(const float value)
 {
 	m_alignmentMultiplier = value;
 }
 
-void Boid::setCohesionMultiplier(const float value)
+void Zoid::setCohesionMultiplier(const float value)
 {
 	m_cohesionMultiplier = value;
 }
 
-void Boid::setVelocityMultiplier(const float value)
+void Zoid::setVelocityMultiplier(const float value)
 {
 	m_velocityMultiplier = value;
 }
 
-void Boid::update(float t, vecBoid& boidList)
+void Zoid::update(float t, vecZoid ZoidList)
 {
 
-	// create a list of nearby boids
-	vecBoid nearBoids = nearbyBoids(boidList);
+	// create a list of nearby Zoids
+	vecZoid nearZoids = nearbyZoids(ZoidList);
 
-	XMFLOAT3 vDesiredDirection = m_scale == 1 
-		? calculateFlockingVector(&nearBoids)
-		: calculatePredatorVector(&nearBoids);
+	XMFLOAT3 vDesiredDirection = m_scale == 1
+		? calculateFlockingVector(nearZoids)
+		: calculatePredatorVector(nearZoids);
 
 	//add lerp m_direction to desired dir
 	XMFLOAT3 vDirection = lerpFloat3(m_direction, vDesiredDirection, t);
 	//XMFLOAT3 vDirection = vDesiredDirection;
-	
+
 	float fSpeed = t * m_speed;
 	if (m_scale != 1) fSpeed *= 1.5f;
 	// set shark
@@ -80,20 +80,20 @@ void Boid::update(float t, vecBoid& boidList)
 		//vVelocity = addFloat3(vAgression, vAlignment);
 		//vVelocity = addFloat3(vVelocity, vCohesion);
 	}
-	
+
 	m_direction = addFloat3(m_direction, vDirection);
-	
+
 	if (magnitudeFloat3(m_direction) == 0.0f)
 		createRandomDirection();
 
 	XMFLOAT3 vVelocity = multiplyFloat3(m_direction, fSpeed);
 	m_direction = normaliseFloat3(vVelocity);
 	m_position = addFloat3(m_position, m_direction);
-	
+
 	DrawableGameObject::update(t);
 }
 
-XMFLOAT3 Boid::addWeightedFloat3(XMFLOAT3& dest, XMFLOAT3& source, const float multiplier)
+XMFLOAT3 Zoid::addWeightedFloat3(XMFLOAT3& dest, XMFLOAT3& source, const float multiplier)
 {
 	XMFLOAT3 vWeighted = multiplyFloat3(source, multiplier);
 	return addFloat3(dest, vWeighted);
@@ -101,24 +101,24 @@ XMFLOAT3 Boid::addWeightedFloat3(XMFLOAT3& dest, XMFLOAT3& source, const float m
 	//return normaliseFloat3(dest);
 }
 
-float Boid::RandomFloat(const float fMin, const float fMax)
+float Zoid::RandomFloat(const float fMin, const float fMax)
 {
 	float fRandom = (float)rand() / (float)RAND_MAX;
 	return fMin + fRandom * (fMax - fMin);
 }
 
-XMFLOAT3 Boid::calculateFlockingVector(vecBoid* boidList) {
+XMFLOAT3 Zoid::calculateFlockingVector(vecZoid ZoidList) {
 	// NOTE these functions should always return a normalised vector
-	//XMFLOAT3  vSeparation = calculateSeparationVector_Group(boidList);
-	XMFLOAT3  vSeparation = calculateSeparationVector_Nearest(boidList);
-	XMFLOAT3  vAlignment = calculateAlignmentVector(boidList);
-	XMFLOAT3  vCohesion = calculateCohesionVector(boidList);
+	//XMFLOAT3  vSeparation = calculateSeparationVector_Group(ZoidList);
+	XMFLOAT3  vSeparation = calculateSeparationVector_Nearest(ZoidList);
+	XMFLOAT3  vAlignment = calculateAlignmentVector(ZoidList);
+	XMFLOAT3  vCohesion = calculateCohesionVector(ZoidList);
 
 	vSeparation = multiplyFloat3(vSeparation, m_seperationMultiplier);
 	vAlignment = multiplyFloat3(vAlignment, m_alignmentMultiplier);
 	vCohesion = multiplyFloat3(vCohesion, m_cohesionMultiplier);
 
-	XMFLOAT3 vDirection = XMFLOAT3 (vSeparation);
+	XMFLOAT3 vDirection = XMFLOAT3(vSeparation);
 	vDirection = addFloat3(vDirection, vAlignment);
 	vDirection = addFloat3(vDirection, vCohesion);
 
@@ -132,56 +132,57 @@ XMFLOAT3 Boid::calculateFlockingVector(vecBoid* boidList) {
 	return vDirection;
 }
 
-XMFLOAT3 Boid::calculatePredatorVector(vecBoid* boidList) 
+XMFLOAT3 Zoid::calculatePredatorVector(vecZoid ZoidList)
 {
 	XMFLOAT3 vDesiredDirection = m_direction;
 
-	if (boidList == nullptr || boidList->size() == 0)
+	if (ZoidList.size() == 0)
 		return vDesiredDirection;
-	
-	float nearestDistance = NEARBY_DISTANCE;// 9999.0f;
-	DrawableGameObject* nearest = nullptr;
 
-	for (Boid* boid : *boidList)
+	float nearestDistance = NEARBY_DISTANCE;// 9999.0f;
+	std::shared_ptr<Zoid> nearest;
+
+	for (std::shared_ptr<Zoid> Zoid : ZoidList)
 	{
-		XMFLOAT3 directionOfNearest = subtractFloat3(*boid->getPosition(), m_position);
+		XMFLOAT3 directionOfNearest = subtractFloat3(*Zoid->getPosition(), m_position);
 		float distance = magnitudeFloat3(directionOfNearest);
 		if (distance < nearestDistance)
 		{
 			nearestDistance = distance;
-			nearest = boid;
+			nearest = Zoid;
 			vDesiredDirection = directionOfNearest;
 		}
 	}
 
-	//TODO: can't delete! must mark for deletion so that another process can remove this boid.
+	//TODO: can't delete! must mark for deletion so that another process can remove this Zoid.
 	if (nearest != nullptr && nearestDistance <= 5.0f)
 	{
-		nearest->setPosition(XMFLOAT3(0,0,-100));
-		m_stats.AddBoid();
+		nearest->setPosition(XMFLOAT3(0, 0, -100));
+		m_stats.AddZoid();
 	}
-	
+
 	//return normaliseFloat3(vDesiredDirection);
 	return vDesiredDirection;
 }
 
-XMFLOAT3 Boid::calculateSeparationVector_Group(vecBoid* boidList)
+XMFLOAT3 Zoid::calculateSeparationVector_Group(vecZoid ZoidList)
 {
 	// calculate average position of nearby
 	if (isnan(m_direction.x))
 		m_direction = m_direction;
-	
+
 	XMFLOAT3 vAverage = XMFLOAT3(0, 0, 0);
-	
-	if (boidList == nullptr || boidList->size() == 0)
+
+	if (ZoidList.size() == 0)
 		return vAverage;
 
 	if (isnan(m_direction.x))
 		m_direction = m_direction;
-	
-	for (Boid* boid : *boidList) {
+
+	for (std::shared_ptr<Zoid> Zoid : ZoidList)
+	{
 		XMFLOAT3 mePos = m_position;
-		XMFLOAT3 itPos = *boid->getPosition();
+		XMFLOAT3 itPos = *Zoid->getPosition();
 		if (isnan(m_direction.x))
 			m_direction = m_direction;
 
@@ -191,57 +192,56 @@ XMFLOAT3 Boid::calculateSeparationVector_Group(vecBoid* boidList)
 		{
 			m_direction = m_direction;
 		}
-//		const float nearestDistanceSquared = dotProduct(directionNearest, directionNearest);
 		const float nearestDistanceSquared = dotProduct(m_direction, directionNearest);
-	 
+
 		if (isnan(m_direction.x))
 			m_direction = m_direction;
 
 		if (isnan(nearestDistanceSquared))
 			mePos = mePos;
 
-		XMFLOAT3 boidDirection = divideFloat3(directionNearest, -nearestDistanceSquared);
-		vAverage = addFloat3(vAverage, boidDirection);
+		XMFLOAT3 ZoidDirection = divideFloat3(directionNearest, -nearestDistanceSquared);
+		vAverage = addFloat3(vAverage, ZoidDirection);
 	}
-	
-	vAverage = divideFloat3(vAverage, (float)boidList->size());
+
+	vAverage = divideFloat3(vAverage, (float)ZoidList.size());
 	vAverage = normaliseFloat3(vAverage);
 
 	return vAverage;
 }
 
-XMFLOAT3 Boid::calculateSeparationVector_Nearest(vecBoid* boidList)
+XMFLOAT3 Zoid::calculateSeparationVector_Nearest(vecZoid ZoidList)
 {
 	// calculate average position of nearby
 
 	float nearestDistance = NEARBY_DISTANCE;// 9999.0f;
-	DrawableGameObject* nearest = nullptr;
+	std::shared_ptr<Zoid> nearest;
 	XMFLOAT3 directionNearestStored;
 
 	XMFLOAT3 nearby = XMFLOAT3(0, 0, 0);
-	if (boidList == nullptr)
+	if (ZoidList.size() == 0)
 		return nearby;
 
 	XMFLOAT3 mePos = m_position;
 
-	for (Boid* boid : *boidList) 
+	for (std::shared_ptr<Zoid> Zoid : ZoidList)
 	{
-		if (boid == this)
+		if (Zoid.get() == this)
 			continue;
 
-		XMFLOAT3 itPos = *boid->getPosition();
+		XMFLOAT3 itPos = *Zoid->getPosition();
 
 		XMFLOAT3 directionNearest = subtractFloat3(itPos, mePos);
 		float d = magnitudeFloat3(directionNearest);
 		if (d < nearestDistance)
 		{
 			nearestDistance = d;
-			nearest = boid;
+			nearest = Zoid;
 			directionNearestStored = directionNearest;
 		}
 	}
 
-	if (nearest != nullptr) 
+	if (nearest != nullptr)
 	{
 		directionNearestStored = normaliseFloat3(directionNearestStored);
 		if (nearestDistance < 10.0f)
@@ -253,34 +253,34 @@ XMFLOAT3 Boid::calculateSeparationVector_Nearest(vecBoid* boidList)
 	return m_direction;
 }
 
-XMFLOAT3 Boid::calculateAlignmentVector(vecBoid* boidList)
+XMFLOAT3 Zoid::calculateAlignmentVector(vecZoid ZoidList)
 {
 	XMFLOAT3 vDirection = XMFLOAT3(0, 0, 0);
 
-	if (boidList == nullptr || boidList->size() == 0)
+	if (ZoidList.size() == 0)
 		return vDirection;
 
 	// your code here
-	for (Boid* boid : *boidList)
-		vDirection = addFloat3(vDirection, *boid->getDirection());
+	for (std::shared_ptr<Zoid> Zoid : ZoidList)
+		vDirection = addFloat3(vDirection, *Zoid->getDirection());
 
-	vDirection = divideFloat3(vDirection, boidList->size());
+	vDirection = divideFloat3(vDirection, ZoidList.size());
 
 	return normaliseFloat3(vDirection); // return the normalised (average) direction of nearby drawables
 }
 
-XMFLOAT3 Boid::calculateCohesionVector(vecBoid* boidList)
+XMFLOAT3 Zoid::calculateCohesionVector(vecZoid ZoidList)
 {
 	XMFLOAT3 vDirection = XMFLOAT3(0, 0, 0);
 
-	if (boidList == nullptr || boidList->size() == 0)
+	if (ZoidList.size() == 0)
 		return vDirection;
 
 	// calculate average position of nearby
-	for (Boid* boid : *boidList) 
-		vDirection = addFloat3(vDirection, *boid->getPosition());
+	for (std::shared_ptr<Zoid> Zoid : ZoidList)
+		vDirection = addFloat3(vDirection, *Zoid->getPosition());
 
-	vDirection = divideFloat3(vDirection, boidList->size());
+	vDirection = divideFloat3(vDirection, ZoidList.size());
 	//vDirection = subtractFloat3(vDirection, m_position);
 	vDirection = subtractFloat3(m_position, vDirection);
 
@@ -290,7 +290,7 @@ XMFLOAT3 Boid::calculateCohesionVector(vecBoid* boidList)
 
 // use but don't alter the methods below
 
-XMFLOAT3 Boid::addFloat3(XMFLOAT3& f1, XMFLOAT3& f2)
+XMFLOAT3 Zoid::addFloat3(XMFLOAT3& f1, XMFLOAT3& f2)
 {
 	XMFLOAT3 out;
 	out.x = f1.x + f2.x;
@@ -300,7 +300,7 @@ XMFLOAT3 Boid::addFloat3(XMFLOAT3& f1, XMFLOAT3& f2)
 	return out;
 }
 
-XMFLOAT3 Boid::subtractFloat3(XMFLOAT3& f1, XMFLOAT3& f2)
+XMFLOAT3 Zoid::subtractFloat3(XMFLOAT3& f1, XMFLOAT3& f2)
 {
 	XMFLOAT3 out;
 	out.x = f1.x - f2.x;
@@ -310,7 +310,7 @@ XMFLOAT3 Boid::subtractFloat3(XMFLOAT3& f1, XMFLOAT3& f2)
 	return out;
 }
 
-XMFLOAT3 Boid::multiplyFloat3(XMFLOAT3& f1, const float scalar)
+XMFLOAT3 Zoid::multiplyFloat3(XMFLOAT3& f1, const float scalar)
 {
 	XMFLOAT3 out;
 	out.x = f1.x * scalar;
@@ -320,7 +320,7 @@ XMFLOAT3 Boid::multiplyFloat3(XMFLOAT3& f1, const float scalar)
 	return out;
 }
 
-XMFLOAT3 Boid::divideFloat3(XMFLOAT3& f1, const float scalar)
+XMFLOAT3 Zoid::divideFloat3(XMFLOAT3& f1, const float scalar)
 {
 	XMFLOAT3 out;
 	out.x = f1.x / scalar;
@@ -330,17 +330,17 @@ XMFLOAT3 Boid::divideFloat3(XMFLOAT3& f1, const float scalar)
 	return out;
 }
 
-float Boid::magnitudeFloat3(XMFLOAT3& f1)
+float Zoid::magnitudeFloat3(XMFLOAT3& f1)
 {
 	return sqrt((f1.x * f1.x) + (f1.y * f1.y) + (f1.z * f1.z));
 }
 
-float Boid::distanceFloat3(XMFLOAT3& f1, XMFLOAT3& f2)
+float Zoid::distanceFloat3(XMFLOAT3& f1, XMFLOAT3& f2)
 {
 	return sqrt(pow(f2.x - f1.x, 2) + pow(f2.y - f1.y, 2) * 1.0);
 }
 
-XMFLOAT3 Boid::normaliseFloat3(XMFLOAT3& f1)
+XMFLOAT3 Zoid::normaliseFloat3(XMFLOAT3& f1)
 {
 	//float length = sqrt((f1.x * f1.x) + (f1.y * f1.y) + (f1.z * f1.z));
 	float length = magnitudeFloat3(f1);
@@ -353,7 +353,7 @@ XMFLOAT3 Boid::normaliseFloat3(XMFLOAT3& f1)
 	return f1;
 }
 
-float Boid::dotProduct(XMFLOAT3& f1, XMFLOAT3& f2)
+float Zoid::dotProduct(XMFLOAT3& f1, XMFLOAT3& f2)
 {
 	//XMFLOAT3 norm1 = normaliseFloat3(f1);
 	//XMFLOAT3 norm2 = normaliseFloat3(f2);
@@ -361,41 +361,41 @@ float Boid::dotProduct(XMFLOAT3& f1, XMFLOAT3& f2)
 	return (f1.x * f2.x) + (f1.y * f2.y) + (f1.z * f2.z);
 }
 
-XMFLOAT3 Boid::lerpFloat3(const XMFLOAT3& f1, const XMFLOAT3& f2, const float scalar)
+XMFLOAT3 Zoid::lerpFloat3(const XMFLOAT3& f1, const XMFLOAT3& f2, const float scalar)
 {
 	//compute the linear interpolation between two vectors
 	XMFLOAT3 out;
 	out.x = f1.x + scalar * (f2.x - f1.x);
 	out.y = f1.y + scalar * (f2.y - f1.y);
 	out.z = f1.z + scalar * (f2.z - f1.z);
-	
+
 	return out;
 }
 
-vecBoid Boid::nearbyBoids(vecBoid& boidList)
+Zoid::vecZoid Zoid::nearbyZoids(vecZoid ZoidList)
 {
-	vecBoid nearBoids;
-	if (boidList.size() == 0)
-		return nearBoids;
+	vecZoid nearZoids;
+	if (ZoidList.size() == 0)
+		return nearZoids;
 
-	for (Boid* boid : boidList) {
+	for (std::shared_ptr<Zoid> Zoid : ZoidList) {
 		// ignore self
-		if (boid == this)
+		if (Zoid.get() == this)
 			continue;
 
 		// get the distance between the two
-		XMFLOAT3 vB = *(boid->getPosition());
+		XMFLOAT3 vB = *(Zoid->getPosition());
 		XMFLOAT3 vDiff = subtractFloat3(m_position, vB);
 		float l = magnitudeFloat3(vDiff);
 		if (l < NEARBY_DISTANCE) {
-			nearBoids.push_back(boid);
+			nearZoids.push_back(Zoid);
 		}
 	}
 
-	return nearBoids;
+	return nearZoids;
 }
 
-void Boid::checkIsOnScreenAndFix(const XMMATRIX&  view, const XMMATRIX&  proj)
+void Zoid::checkIsOnScreenAndFix(const XMMATRIX& view, const XMMATRIX& proj)
 {
 	XMFLOAT4 v4;
 	v4.x = m_position.x;

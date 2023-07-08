@@ -14,7 +14,7 @@ AppEngine::AppEngine(AppEngineParams params)
     m_pGraphics = std::make_unique<Graphics>(m_pAppWindow->GetHandle());
     m_pGraphics->Initialise(params.nWidth, params.nHeight);
 
-    m_pGame = std::make_unique<Game>(m_pGraphics.get());
+    m_pGame = std::make_unique<Game>();
     m_pTimer = std::make_unique<FrameTimer>(DEFAULT_FPS);
 }
 

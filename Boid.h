@@ -36,6 +36,7 @@ class Boid :
 	public DrawableGameObject
 {
 public:
+
 	Boid(XMFLOAT3 position);
 	~Boid();
 
@@ -44,7 +45,7 @@ public:
 
 	XMFLOAT3*							getDirection() { return &m_direction; }
 	void								checkIsOnScreenAndFix(const XMMATRIX&  view, const XMMATRIX&  proj);
-	void								update(float t, vecBoid* drawList);
+	void								update(float t, vecBoid& drawList);
 
 	void								setSeperationMultiplier(const float value);
 	void								setAlignmentMultiplier(const float value);
@@ -57,7 +58,7 @@ protected:
 	void								setDirection(XMFLOAT3 direction);
 
 
-	vecBoid								nearbyBoids(vecBoid* boidList);
+	vecBoid								nearbyBoids(vecBoid& boidList);
 	XMFLOAT3							calculateSeparationVector_Group(vecBoid* drawList);
 	XMFLOAT3							calculateSeparationVector_Nearest(vecBoid* drawList);
 	XMFLOAT3							calculateAlignmentVector(vecBoid* drawList);

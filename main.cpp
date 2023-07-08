@@ -47,32 +47,33 @@ void                    CleanupImGui();
 // Global Variables
 //--------------------------------------------------------------------------------------
 
-wchar_t                 g_sAppTitle[100] = L"Refactored Boids";
-std::unique_ptr<AppWindow> g_pAppWindow;
-std::unique_ptr<Graphics> g_pGraphics;
-std::unique_ptr<Camera> g_pCamera;
-//std::unique_ptr<Light> g_pLight;
+wchar_t                     g_sAppTitle[100] = L"Refactored Boids";
+std::unique_ptr<AppWindow>  g_pAppWindow;
+std::unique_ptr<Graphics>   g_pGraphics;
+std::unique_ptr<Camera>     g_pCamera;
+//std::unique_ptr<Light>    g_pLight;
 std::unique_ptr<FrameTimer> g_pTimer;
+std::unique_ptr<Game>       g_pGame;
 
 // These are no longer used but haven't been removed as referenced in CleanupDevice() method
-ID3D11VertexShader*     g_pVertexShader = nullptr;
-ID3D11PixelShader*      g_pPixelShader = nullptr;
-ID3D11InputLayout*		g_pInputLayout = nullptr;
+ID3D11VertexShader*         g_pVertexShader = nullptr;
+ID3D11PixelShader*          g_pPixelShader = nullptr;
+ID3D11InputLayout*		    g_pInputLayout = nullptr;
 
-ID3D11Buffer*           g_pConstantBuffer = nullptr;
-ID3D11Buffer*           g_pMaterialConstantBuffer = nullptr;
-ID3D11Buffer*           g_pLightConstantBuffer = nullptr;
+ID3D11Buffer*               g_pConstantBuffer = nullptr;
+ID3D11Buffer*               g_pMaterialConstantBuffer = nullptr;
+ID3D11Buffer*               g_pLightConstantBuffer = nullptr;
 // <-- End of unused variables
 
 // TODO: move to a game class that inherits from a gamestate class
-vecBoid					g_Boids;
+vecBoid				        g_Boids;
 
-constexpr auto          g_PI = 3.14159265358979323846;
+constexpr auto              g_PI = 3.14159265358979323846;
 
-static float            g_seperation;
-static float            g_alignment;
-static float            g_cohesion;
-static float            g_velocity;
+static float                g_seperation;
+static float                g_alignment;
+static float                g_cohesion;
+static float                g_velocity;
 
 Boid* createFish(XMFLOAT3 position, bool shark)
 {
@@ -220,6 +221,9 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     
     // TODO: move to a gamestate class
     placeFish();
+    g_pGame = std::make_unique<Game>();
+    g_pGame->placeFish(Game::SQUARE);
+    g_pGame->Initialise(*g_pGraphics);
 
     // TODO: move to an ImGui class
     InitImGui();
@@ -253,10 +257,10 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 //--------------------------------------------------------------------------------------
 void        CleanupDevice()
 {
-	for (unsigned int i = 0; i < g_Boids.size(); i++)
+	/*for (unsigned int i = 0; i < g_Boids.size(); i++)
 	{
 		delete g_Boids[i];
-	}
+	}*/
 
 	g_Boids.clear();
 
@@ -327,31 +331,10 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 void Render()
 {
     // Update our time
-    /*
-    static float t = 0.0f;
-    static ULONGLONG timeStart = 0;
-    ULONGLONG timeCur = GetTickCount64();
-    if( timeStart == 0 )
-        timeStart = timeCur;
-    t = ( timeCur - timeStart ) / 1000.0f;
-	timeStart = timeCur;
-
-	float FPS60 = 1.0f / 60.0f;
-	static float cummulativeTime = 0;
-
-	// cap the framerate at 60 fps 
-	cummulativeTime += t;
-	if (cummulativeTime >= FPS60) {
-		cummulativeTime = cummulativeTime - FPS60;
-	}
-	else {
-		return;
-	}
-    */
-
     if (!g_pTimer->Tick())
         return;
 
+    // store the time delta
     float t = g_pTimer->GetDelta();
     
     g_pGraphics->BeginDraw();
@@ -365,17 +348,8 @@ void Render()
         g_Boids[i]->setCohesionMultiplier(g_cohesion);
         g_Boids[i]->setVelocityMultiplier(g_velocity);
 		
-		g_Boids[i]->update(t, &g_Boids);
+		g_Boids[i]->update(t, g_Boids);
         
-  //      g_View = g_pGraphics->GetViewMatrix();
-  //      g_Projection = g_pGraphics->GetProjectionMatrix();
-		//XMMATRIX vp = g_View * g_Projection;
-		//Boid* dob = (Boid*)g_Boids[i];
-
-        //g_Boids[i]->checkIsOnScreenAndFix(
-        //    g_pGraphics->GetViewMatrix(),
-        //    g_pGraphics->GetProjectionMatrix());
-
         g_Boids[i]->checkIsOnScreenAndFix(
             XMMatrixTranspose(XMLoadFloat4x4(g_pCamera->GetView())),
             XMMatrixTranspose(XMLoadFloat4x4(g_pCamera->GetProjection())));

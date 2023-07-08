@@ -34,6 +34,9 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="FrameTimer.cpp" />
     <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="AppEngine.cpp" />
+    <ClCompile Include="Zoid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boid.h" />
@@ -85,6 +88,9 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="FrameTimer.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="AppEngine.h" />
+    <ClInclude Include="Zoid.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\floor.dds">
