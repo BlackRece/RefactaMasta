@@ -60,6 +60,12 @@ void Game::Update(float dt)
     statsParams.iZoidAmount = m_vecZoids.size();
 
     m_pImGui->SetMultipliers(statsParams);
+
+    statsParams = m_pImGui->GetMultipliers();
+    m_fSeperation = statsParams.fSeperation;
+	m_fAlignment = statsParams.fAlignment;
+	m_fCohesion = statsParams.fCohesion;
+	m_fVelocity = statsParams.fVelocity;
 }
 
 void Game::Render(Graphics& pGraphics)
