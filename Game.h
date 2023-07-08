@@ -4,6 +4,7 @@
 #include <DirectXMath.h>
 #include <memory>
 #include <vector>
+
 #include "Zoid.h"
 
 #define SEPERATION_MULTIPLIER	5.0f    //1.0f//12.0f
@@ -14,6 +15,7 @@
 
 class Graphics;
 class Camera;
+class ImGuiWrapper;
 
 class Game
 {
@@ -29,7 +31,7 @@ public:
 	Game();
 	~Game();
 
-	void Initialise(Graphics& pGraphics);
+	bool Initialise(HWND hWnd, Graphics& pGraphics);
 	void Update(float dt);
 	void Render(Graphics& pGraphics);
 
@@ -42,15 +44,17 @@ public:
 private:
 	void DeleteZoids();
 
-	Zoid::vecZoid				m_vecZoids;
+	Zoid::vecZoid					m_vecZoids;
 
-	// TODO: Instantiate a Camera object
-	std::unique_ptr<Camera>		m_pCamera;
+	std::unique_ptr<Camera>			m_pCamera;
+	std::unique_ptr<ImGuiWrapper>	m_pImGui;
 
-	float						m_fSeperation;
-	float						m_fAlignment;
-	float						m_fCohesion;
-	float						m_fVelocity;
+	float							m_fSeperation;
+	float							m_fAlignment;
+	float							m_fCohesion;
+	float							m_fVelocity;
+
+	bool							b_bZoidsIsReady;
 };
 
 #endif // !GAME_H

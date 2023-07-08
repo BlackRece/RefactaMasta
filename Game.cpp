@@ -1,6 +1,8 @@
 #include "Game.h"
+
 #include "Graphics.h"
 #include "Camera.h"
+#include "ImGuiWrapper.h"
 
 Game::Game() :
     m_fSeperation(SEPERATION_MULTIPLIER),
@@ -8,15 +10,14 @@ Game::Game() :
 	m_fCohesion(COHESION_MULTIPLIER),
 	m_fVelocity(VELOCITY_MULTIPLIER)
 {
-	m_vecZoids.reserve(100);    
-
+	m_pImGui = std::make_unique<ImGuiWrapper>();
 }
 
 Game::~Game()
 {
 }
 
-void Game::Initialise(Graphics& pGraphics)
+bool Game::Initialise(HWND hWnd, Graphics& pGraphics)
 {
     HRESULT hr = S_OK;
 
@@ -26,26 +27,39 @@ void Game::Initialise(Graphics& pGraphics)
     {
         hr = pZoid->initMesh(pGraphics.GetDevice(), pGraphics.GetContext());
         if (FAILED(hr))
-			return;
+			break;
     }
+
+    m_pImGui->Initialise(hWnd, pGraphics);
+    
+    return SUCCEEDED(hr);
 }
 
 void Game::Update(float dt)
 {
+    Zoid::setSeperationMultiplier(m_fSeperation);
+    Zoid::setAlignmentMultiplier(m_fAlignment);
+    Zoid::setCohesionMultiplier(m_fCohesion);
+    Zoid::setVelocityMultiplier(m_fVelocity);
+
     for (std::shared_ptr<Zoid> pZoid : m_vecZoids)
     {
-        pZoid->setSeperationMultiplier(m_fSeperation);
-        pZoid->setAlignmentMultiplier(m_fAlignment);
-        pZoid->setCohesionMultiplier(m_fCohesion);
-        pZoid->setVelocityMultiplier(m_fVelocity);
-
         pZoid->update(dt, m_vecZoids);
 
         pZoid->checkIsOnScreenAndFix(
             XMMatrixTranspose(XMLoadFloat4x4(m_pCamera->GetView())),
             XMMatrixTranspose(XMLoadFloat4x4(m_pCamera->GetProjection())));
-
     }
+
+    // TODO: get stats from Zoids
+    ImGuiWrapper::StatsParams statsParams;
+    statsParams.fSeperation = m_fSeperation;
+    statsParams.fAlignment = m_fAlignment;
+    statsParams.fCohesion = m_fCohesion;
+    statsParams.fVelocity = m_fVelocity;
+    statsParams.iZoidAmount = m_vecZoids.size();
+
+    m_pImGui->Update(statsParams);
 }
 
 void Game::Render(Graphics& pGraphics)
@@ -67,6 +81,8 @@ void Game::Render(Graphics& pGraphics)
         // draw Zoid
 		pZoid->draw(pGraphics.GetContext().Get());
 	}
+
+    m_pImGui->Render();
 }
 
 std::shared_ptr<Zoid> Game::createFish(XMFLOAT3 position, bool bShark)
@@ -153,8 +169,8 @@ void Game::spiralFormation(int iCoils, int iRadius, int iRotation)
         double around = theta + iRotation;
         
         // Convert 'around' and 'away' to X and Y.
-        double x = centerX + cos(around) * away;
-        double y = centerY + sin(around) * away;
+        float x = centerX + cosf(around) * away;
+        float y = centerY + sinf(around) * away;
         
         // Should this fish be a shark?
         bool bIsShark = (centerX == x && centerY == y);

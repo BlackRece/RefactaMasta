@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Boid.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp">
       <Filter>Core %28no need to alter%29</Filter>
@@ -37,9 +36,9 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="AppEngine.cpp" />
     <ClCompile Include="Zoid.cpp" />
+    <ClCompile Include="ImGuiWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Boid.h" />
     <ClInclude Include="DDSTextureLoader.h">
       <Filter>Core %28no need to alter%29</Filter>
     </ClInclude>
@@ -91,6 +90,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="AppEngine.h" />
     <ClInclude Include="Zoid.h" />
+    <ClInclude Include="ImGuiWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\floor.dds">

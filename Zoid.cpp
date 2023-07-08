@@ -2,7 +2,13 @@
 
 #define NEARBY_DISTANCE			20.0f	// how far Zoids can see
 
+// Define the static member variables
 ZoidData Zoid::m_stats;
+
+float Zoid::m_seperationMultiplier = 1.0f;
+float Zoid::m_alignmentMultiplier = 1.0f;
+float Zoid::m_cohesionMultiplier = 1.0f;
+float Zoid::m_velocityMultiplier = 1.0f;
 
 Zoid::Zoid(XMFLOAT3 position)
 {
@@ -264,7 +270,7 @@ XMFLOAT3 Zoid::calculateAlignmentVector(vecZoid ZoidList)
 	for (std::shared_ptr<Zoid> Zoid : ZoidList)
 		vDirection = addFloat3(vDirection, *Zoid->getDirection());
 
-	vDirection = divideFloat3(vDirection, ZoidList.size());
+	vDirection = divideFloat3(vDirection, (float)ZoidList.size());
 
 	return normaliseFloat3(vDirection); // return the normalised (average) direction of nearby drawables
 }
@@ -280,7 +286,7 @@ XMFLOAT3 Zoid::calculateCohesionVector(vecZoid ZoidList)
 	for (std::shared_ptr<Zoid> Zoid : ZoidList)
 		vDirection = addFloat3(vDirection, *Zoid->getPosition());
 
-	vDirection = divideFloat3(vDirection, ZoidList.size());
+	vDirection = divideFloat3(vDirection, (float)ZoidList.size());
 	//vDirection = subtractFloat3(vDirection, m_position);
 	vDirection = subtractFloat3(m_position, vDirection);
 
@@ -337,7 +343,7 @@ float Zoid::magnitudeFloat3(XMFLOAT3& f1)
 
 float Zoid::distanceFloat3(XMFLOAT3& f1, XMFLOAT3& f2)
 {
-	return sqrt(pow(f2.x - f1.x, 2) + pow(f2.y - f1.y, 2) * 1.0);
+	return (float)sqrt(pow(f2.x - f1.x, 2) + pow(f2.y - f1.y, 2) * 1.0);
 }
 
 XMFLOAT3 Zoid::normaliseFloat3(XMFLOAT3& f1)
@@ -346,11 +352,13 @@ XMFLOAT3 Zoid::normaliseFloat3(XMFLOAT3& f1)
 	float length = magnitudeFloat3(f1);
 	return divideFloat3(f1, length);
 
+	/*
 	f1.x /= length;
 	f1.y /= length;
 	f1.z /= length;
 
 	return f1;
+	*/
 }
 
 float Zoid::dotProduct(XMFLOAT3& f1, XMFLOAT3& f2)

@@ -361,13 +361,13 @@
   <ItemGroup>
     <ClCompile Include="AppEngine.cpp" />
     <ClCompile Include="AppWindow.cpp" />
-    <ClCompile Include="Boid.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="DrawableGameObject.cpp" />
     <ClCompile Include="FrameTimer.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="ImGuiWrapper.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_impl_dx11.cpp" />
@@ -385,7 +385,6 @@
   <ItemGroup>
     <ClInclude Include="AppEngine.h" />
     <ClInclude Include="AppWindow.h" />
-    <ClInclude Include="Boid.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ConstantBuffers.h" />
     <ClInclude Include="DDSTextureLoader.h" />
@@ -394,6 +393,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="ImGui.h" />
+    <ClInclude Include="ImGuiWrapper.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_dx11.h" />

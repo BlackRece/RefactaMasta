@@ -41,9 +41,6 @@ public:
 	float GetWidth() const;
 	float GetHeight() const;
 
-	XMMATRIX GetViewMatrix() const;
-	XMMATRIX GetProjectionMatrix() const;
-
 	void SetupLightingConstantBuffer(const Camera& pCamera);
 	void SetupMaterialConstantBuffer(MaterialPropertiesConstantBuffer material);
 	void SetupTransformConstantBuffer(const XMFLOAT4X4& pTransform, const Camera& pCamera);
@@ -87,8 +84,6 @@ private:
 	bool	m_bIsDrawing;
 	int		m_nWidth;
 	int		m_nHeight;
-
-	std::unique_ptr<Camera>				m_pCamera;
 };
 
 #endif // !GRAPHICS_H

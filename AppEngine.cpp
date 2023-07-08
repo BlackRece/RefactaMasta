@@ -27,7 +27,7 @@ void AppEngine::Start()
 	m_bRunning = true;
 
     m_pGame->placeFish(Game::SQUARE);
-    m_pGame->Initialise(*m_pGraphics);
+    m_bRunning = m_pGame->Initialise(m_pAppWindow->GetHandle(), *m_pGraphics);
 }
 
 void AppEngine::Run()
@@ -88,50 +88,8 @@ void AppEngine::Update()
 void AppEngine::Render()
 {
     m_pGraphics->BeginDraw();
+
     m_pGame->Render(*m_pGraphics);
 
-    // TODO: boid stuff should be handled by a gamestate class
-    //Boid::updateStats(t);
-
-    //for (unsigned int i = 0; i < g_Boids.size(); i++)
-    //{
-    //    g_Boids[i]->setSeperationMultiplier(g_seperation);
-    //    g_Boids[i]->setAlignmentMultiplier(g_alignment);
-    //    g_Boids[i]->setCohesionMultiplier(g_cohesion);
-    //    g_Boids[i]->setVelocityMultiplier(g_velocity);
-
-    //    g_Boids[i]->update(t, &g_Boids);
-
-    //    //      g_View = g_pGraphics->GetViewMatrix();
-    //    //      g_Projection = g_pGraphics->GetProjectionMatrix();
-    //          //XMMATRIX vp = g_View * g_Projection;
-    //          //Boid* dob = (Boid*)g_Boids[i];
-
-    //          //g_Boids[i]->checkIsOnScreenAndFix(
-    //          //    g_pGraphics->GetViewMatrix(),
-    //          //    g_pGraphics->GetProjectionMatrix());
-
-    //    g_Boids[i]->checkIsOnScreenAndFix(
-    //        XMMatrixTranspose(XMLoadFloat4x4(g_pCamera->GetView())),
-    //        XMMatrixTranspose(XMLoadFloat4x4(g_pCamera->GetProjection())));
-
-    //    m_pGraphics->SetupTransformConstantBuffer(
-    //        *g_Boids[i]->getTransform(),
-    //        *g_pCamera.get());
-    //    m_pGraphics->SetupLightingConstantBuffer(*g_pCamera.get());
-    //    m_pGraphics->SetupMaterialConstantBuffer(g_Boids[i]->getMaterial());
-
-    //    // Render a cube
-    //    m_pGraphics->SetupConstantBuffers(
-    //        *g_Boids[i]->getTextureResourceView(),
-    //        *g_Boids[i]->getTextureSamplerState());
-
-    //    // draw 
-    //    g_Boids[i]->draw(g_pGraphics->GetContext().Get());
-    //}
-
-    //RenderImGui();
-
-    // Present our back buffer to our front buffer
     m_pGraphics->EndDraw();
 }

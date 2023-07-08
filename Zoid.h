@@ -34,6 +34,7 @@ struct ZoidData
 	inline void Update(float delta) { fTimer += delta; }
 };
 
+
 class Zoid :
 	public DrawableGameObject
 {
@@ -45,16 +46,16 @@ public:
 
 	static inline ZoidData			getStats() { return m_stats; }
 	static inline void				updateStats(float delta) { m_stats.Update(delta); }
+	
+	static void						setSeperationMultiplier(const float value);
+	static void						setAlignmentMultiplier(const float value);
+	static void						setCohesionMultiplier(const float value);
+	static void						setVelocityMultiplier(const float value);
 
 	XMFLOAT3*						getDirection() { return &m_direction; }
 	void							checkIsOnScreenAndFix(const XMMATRIX& view, const XMMATRIX& proj);
 	void							update(float t, vecZoid drawList);
 
-	void							setSeperationMultiplier(const float value);
-	void							setAlignmentMultiplier(const float value);
-	void							setCohesionMultiplier(const float value);
-
-	void							setVelocityMultiplier(const float value);
 	void							setRange(const float value);
 
 protected:
@@ -89,12 +90,12 @@ protected:
 	float							m_speed;
 
 private:
-	float							m_velocityMultiplier;
 	float							m_range;
 
-	float							m_seperationMultiplier;
-	float							m_alignmentMultiplier;
-	float							m_cohesionMultiplier;
+	static float					m_seperationMultiplier;
+	static float					m_alignmentMultiplier;
+	static float					m_cohesionMultiplier;
+	static float					m_velocityMultiplier;
 
 	static ZoidData					m_stats;
 };

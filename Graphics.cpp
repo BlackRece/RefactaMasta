@@ -41,10 +41,6 @@ Result Graphics::Initialise(int width, int height)
     if (!result.IsSuccess())
         return result;
 
-    m_pCamera = std::make_unique<Camera>(m_nWidth, m_nHeight);
-
-    //TODO: Initialise meshes of drawable objects
-
     /*result = CreateVertexBuffer();
     if (!result.IsSuccess())
         return result;*/
@@ -472,8 +468,8 @@ void Graphics::SetupTransformConstantBuffer(const XMFLOAT4X4& pTransform, const 
 {
     ConstantBuffer cb1;
     cb1.mWorld = XMMatrixTranspose(XMLoadFloat4x4(&pTransform));
-    cb1.mView = XMMatrixTranspose(XMLoadFloat4x4(m_pCamera->GetView()));
-    cb1.mProjection = XMMatrixTranspose(XMLoadFloat4x4(m_pCamera->GetProjection()));
+    cb1.mView = XMMatrixTranspose(XMLoadFloat4x4(pCamera.GetView()));
+    cb1.mProjection = XMMatrixTranspose(XMLoadFloat4x4(pCamera.GetProjection()));
     cb1.vOutputColor = XMFLOAT4(0, 0, 0, 0);
     m_pDeviceContext->UpdateSubresource(m_pConstantBuffer.Get(), 0, 0, &cb1, 0, 0);
 }
@@ -593,22 +589,12 @@ wrl::ComPtr<ID3D11Device> Graphics::GetDevice() const
 
 float Graphics::GetWidth() const
 {
-    return m_nWidth;
+    return (float)m_nWidth;
 }
 
 float Graphics::GetHeight() const
 {
-	return m_nHeight;
-}
-
-XMMATRIX Graphics::GetViewMatrix() const
-{
-    return m_pCamera->GetViewMatrix();
-}
-
-XMMATRIX Graphics::GetProjectionMatrix() const
-{
-    return m_pCamera->GetProjectionMatrix();
+	return (float)m_nHeight;
 }
 
 std::string Graphics::GetErrorMessage(const HRESULT hr)
