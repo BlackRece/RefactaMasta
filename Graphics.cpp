@@ -591,6 +591,16 @@ wrl::ComPtr<ID3D11Device> Graphics::GetDevice() const
     return m_pDevice;
 }
 
+float Graphics::GetWidth() const
+{
+    return m_nWidth;
+}
+
+float Graphics::GetHeight() const
+{
+	return m_nHeight;
+}
+
 XMMATRIX Graphics::GetViewMatrix() const
 {
     return m_pCamera->GetViewMatrix();

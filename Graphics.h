@@ -38,6 +38,9 @@ public:
 	wrl::ComPtr<ID3D11DeviceContext>	GetContext() const;
 	wrl::ComPtr<ID3D11Device>			GetDevice() const;
 
+	float GetWidth() const;
+	float GetHeight() const;
+
 	XMMATRIX GetViewMatrix() const;
 	XMMATRIX GetProjectionMatrix() const;
 
