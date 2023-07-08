@@ -24,16 +24,7 @@ void ImGuiWrapper::Initialise(HWND& hWnd, Graphics& pGraphics)
         pGraphics.GetContext().Get());
 }
 
-void ImGuiWrapper::Update(StatsParams statsParams)
-{
-    m_iZoidAmount = statsParams.iZoidAmount;
 
-    m_fSeperation = statsParams.fSeperation;
-    m_fAlignment = statsParams.fAlignment;
-    m_fCohesion = statsParams.fCohesion;
-    m_fVelocity = statsParams.fVelocity;
-
-}
 
 void ImGuiWrapper::Render()
 {
@@ -115,6 +106,28 @@ void ImGuiWrapper::Render()
 
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
+
+void ImGuiWrapper::SetMultipliers(MultiplierParams params)
+{
+    m_iZoidAmount = params.iZoidAmount;
+
+    m_fSeperation = params.fSeperation;
+    m_fAlignment = params.fAlignment;
+    m_fCohesion = params.fCohesion;
+    m_fVelocity = params.fVelocity;
+}
+
+ImGuiWrapper::MultiplierParams ImGuiWrapper::GetMultipliers()
+{
+    MultiplierParams params;
+    params.iZoidAmount = m_iZoidAmount;
+
+    params.fSeperation = m_fSeperation;
+    params.fAlignment = m_fAlignment;
+    params.fCohesion = m_fCohesion;
+    params.fVelocity = m_fVelocity;
+	return params;
 }
 
 ImGuiWrapper::ImGuiWrapper(const ImGuiWrapper&)

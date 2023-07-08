@@ -52,14 +52,14 @@ void Game::Update(float dt)
     }
 
     // TODO: get stats from Zoids
-    ImGuiWrapper::StatsParams statsParams;
+    ImGuiWrapper::MultiplierParams statsParams;
     statsParams.fSeperation = m_fSeperation;
     statsParams.fAlignment = m_fAlignment;
     statsParams.fCohesion = m_fCohesion;
     statsParams.fVelocity = m_fVelocity;
     statsParams.iZoidAmount = m_vecZoids.size();
 
-    m_pImGui->Update(statsParams);
+    m_pImGui->SetMultipliers(statsParams);
 }
 
 void Game::Render(Graphics& pGraphics)

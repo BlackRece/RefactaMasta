@@ -8,7 +8,7 @@ class Graphics;
 class ImGuiWrapper
 {
 public:
-	struct StatsParams
+	struct MultiplierParams
 	{
 		int		iZoidAmount;
 
@@ -22,9 +22,11 @@ public:
 	~ImGuiWrapper();
 
 	void Initialise(HWND& hWnd, Graphics& pGraphics);
-	void Update(StatsParams statsParams);
 	void Render();
 	void Shutdown();
+
+	void SetMultipliers(MultiplierParams params);
+	MultiplierParams GetMultipliers();
 
 private:
 	ImGuiWrapper(const ImGuiWrapper&);
