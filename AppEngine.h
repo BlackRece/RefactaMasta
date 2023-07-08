@@ -5,10 +5,12 @@
 #include "AppWindow.h"
 #include "Graphics.h"
 #include "Camera.h"
-#include "Light.h"
+//#include "Light.h"
 #include "FrameTimer.h"
 
 #define DEFAULT_FPS 60.0f
+
+class Game;
 
 class AppEngine
 {
@@ -19,6 +21,7 @@ public:
 		int			nWidth;
 		int			nHeight;
 		wchar_t*	pTitle;
+		HINSTANCE	hInstance;
 	};
 
 	AppEngine(AppEngineParams params);
@@ -39,15 +42,14 @@ private:
 	std::unique_ptr<Graphics> m_pGraphics;
 
 	// TODO: Instantiate a Window object
-	std::unique_ptr<AppWindow> m_pWindow;
-
-	// TODO: Instantiate a Camera object
-	std::unique_ptr<Camera> m_pCamera;
+	std::unique_ptr<AppWindow> m_pAppWindow;
 
 	// TODO: Instantiate a Light object
 	//std::unique_ptr<Light> m_pLight;
 
 	std::unique_ptr<FrameTimer> m_pTimer;
+
+	std::unique_ptr<Game> m_pGame;
 };
 
 #endif // !APPENGINE_H

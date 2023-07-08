@@ -1,4 +1,5 @@
 #include "AppEngine.h"
+#include "Game.h"
 
 AppEngine::AppEngine(AppEngineParams params)
 {
@@ -8,13 +9,12 @@ AppEngine::AppEngine(AppEngineParams params)
     winParams.nHeight = params.nHeight;
     winParams.nCmdShow = params.nCmdShow;
 
-    m_pAppWindow = std::make_unique<AppWindow>(hInstance, winParams);
+    m_pAppWindow = std::make_unique<AppWindow>(params.hInstance, winParams);
 
-    m_pGraphics = std::make_unique<Graphics>(g_pAppWindow->GetHandle());
+    m_pGraphics = std::make_unique<Graphics>(m_pAppWindow->GetHandle());
     m_pGraphics->Initialise(params.nWidth, params.nHeight);
 
-    m_pCamera = std::make_unique<Camera>(params.nWidth, params.nHeight);
-
+    m_pGame = std::make_unique<Game>(m_pGraphics.get());
     m_pTimer = std::make_unique<FrameTimer>(DEFAULT_FPS);
 }
 
@@ -61,8 +61,8 @@ void AppEngine::ProcessMessages()
 			m_bRunning = false;
 			break;
         case WM_DESTROY:
-                PostQuitMessage();
-                break;
+            PostQuitMessage(0);
+            break;
         default:
             /* do nothing */
             break;
@@ -78,11 +78,13 @@ void AppEngine::Update()
     if(m_pTimer->Tick())
         return;
 
+    m_pGame->Update(m_pTimer->GetDelta());
 }
 
 void AppEngine::Render()
 {
     m_pGraphics->BeginDraw();
+    m_pGame->Render(*m_pGraphics);
 
     // TODO: boid stuff should be handled by a gamestate class
     //Boid::updateStats(t);
