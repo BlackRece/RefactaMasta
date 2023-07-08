@@ -24,6 +24,10 @@ AppEngine::~AppEngine()
 
 void AppEngine::Start()
 {
+	m_bRunning = true;
+
+    m_pGame->placeFish(Game::SQUARE);
+    m_pGame->Initialise(*m_pGraphics);
 }
 
 void AppEngine::Run()

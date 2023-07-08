@@ -27,6 +27,7 @@
 
 #include <time.h>
 #include "Boid.h"
+#include "AppEngine.h"
 
 #include "ImGui.h"
 #include <string>
@@ -202,6 +203,21 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     UNREFERENCED_PARAMETER( hPrevInstance );
     UNREFERENCED_PARAMETER( lpCmdLine );
 
+    AppEngine::AppEngineParams params;
+    params.pTitle = g_sAppTitle;
+    params.nWidth = WINDOW_WIDTH;
+    params.nHeight = WINDOW_HEIGHT;
+    params.nCmdShow = nCmdShow;
+    params.hInstance = hInstance;
+
+    std::unique_ptr<AppEngine> pAppEngine = std::make_unique<AppEngine>(params);
+    pAppEngine->Start();
+    pAppEngine->Run();
+    pAppEngine->Stop();
+
+    return 0;
+
+    /*
     // TODO: move to AppEngine class
     AppWindow::AppWindowParams params;
     params.pTitle = g_sAppTitle;
@@ -230,6 +246,7 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
     // TODO: move to AppEngine class
     g_pTimer->Start();
+
     // Main message loop
     MSG msg = {0};
     while( WM_QUIT != msg.message )
@@ -250,6 +267,7 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
     // TODO: return a result from AppEngine class
     return ( int )msg.wParam;
+    */
 }
 
 //--------------------------------------------------------------------------------------
