@@ -1,0 +1,19 @@
+name: Get Last 3 Commit Messages From RefactaMasta
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  get_commit_messages:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Get commit messages
+      run: |
+        echo "#### Status:" > README.md
+        echo "| Commit | Message |" >> README.md
+        echo "|--------|---------|" >> README.md
+        git log -n 3 --format="| [%h](https://github.com/BlackRece/RefactaMasta/commit/%H) | %s |" >> README.md
+      shell: bash

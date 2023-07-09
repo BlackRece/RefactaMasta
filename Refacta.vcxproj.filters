@@ -118,4 +118,7 @@
       <Filter>Core %28no need to alter%29</Filter>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include=".github\workflows\refacta-commit-msgs.yml" />
+  </ItemGroup>
 </Project>
