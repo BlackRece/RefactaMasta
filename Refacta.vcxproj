@@ -420,6 +420,7 @@
   <ItemGroup>
     <None Include=".github\workflows\main.yml" />
     <None Include=".github\workflows\refacta-commit-msgs.yml" />
+    <None Include=".travis.yml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
