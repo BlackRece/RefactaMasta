@@ -418,6 +418,7 @@
     <Image Include="Resources\stone.dds" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".github\workflows\main.yml" />
     <None Include=".github\workflows\refacta-commit-msgs.yml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
