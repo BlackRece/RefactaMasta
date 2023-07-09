@@ -1,0 +1,6 @@
+language: csharp
+solution: Refacta.sln
+mono: none
+dotnet: 5.0
+script:
+ - dotnet build
