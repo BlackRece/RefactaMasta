@@ -10,6 +10,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+    - name: Print working directory
+	  run: pwd
     - name: Get commit messages
       run: |
         echo "#### Status:" > README.md
