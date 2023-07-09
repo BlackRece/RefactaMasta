@@ -28,6 +28,15 @@ XMFLOAT4 Camera::GetPosition() const
 	return m_position;
 }
 
+float Camera::GetWidth() const
+{
+	return (float)m_nWidth;
+}
+
+float Camera::GetHeight() const
+{
+	return (float)m_nHeight;
+}
 
 XMFLOAT4X4* Camera::GetView() const
 {
