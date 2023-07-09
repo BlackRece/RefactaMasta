@@ -1,6 +1,8 @@
-language: csharp
-solution: Refacta.sln
-mono: none
-dotnet: 5.0
+language: cpp
+os: windows
+
+before_install:
+  - choco install visualstudio2019buildtools --package-parameters "--includeRecommended --includeOptional --passive --locale en-US"
+
 script:
- - dotnet build
+  - msbuild /p:Configuration=Release RefactaMasta.sln
