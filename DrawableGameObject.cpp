@@ -193,7 +193,7 @@ void DrawableGameObject::update(float t)
 	
 	XMMATRIX mTranslate = XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
 
-	XMStoreFloat4x4(&m_World, mSize * mSpin * mTranslate);
+	XMStoreFloat4x4(&m_World, mSize /* mSpin*/ * mTranslate);
 }
 
 
