@@ -32,27 +32,8 @@ bool Game::Initialise(HWND hWnd, Graphics& pGraphics)
 
     m_pImGui->Initialise(hWnd, pGraphics);
     
-    return SUCCEEDED(hr);
-}
-
-void Game::Update(float dt)
-{
-    Zoid::setSeperationMultiplier(m_fSeperation);
-    Zoid::setAlignmentMultiplier(m_fAlignment);
-    Zoid::setCohesionMultiplier(m_fCohesion);
-    Zoid::setVelocityMultiplier(m_fVelocity);
-
-    for (std::shared_ptr<Zoid> pZoid : m_vecZoids)
-    {
-        pZoid->update(dt, m_vecZoids);
-
-        pZoid->checkIsOnScreenAndFix(
-            XMMatrixTranspose(XMLoadFloat4x4(m_pCamera->GetView())),
-            XMMatrixTranspose(XMLoadFloat4x4(m_pCamera->GetProjection())));
-    }
-
-    // TODO: get stats from Zoids
     ImGuiWrapper::MultiplierParams statsParams;
+
     statsParams.fSeperation = m_fSeperation;
     statsParams.fAlignment = m_fAlignment;
     statsParams.fCohesion = m_fCohesion;
@@ -61,11 +42,40 @@ void Game::Update(float dt)
 
     m_pImGui->SetMultipliers(statsParams);
 
-    statsParams = m_pImGui->GetMultipliers();
+    return SUCCEEDED(hr);
+}
+
+void Game::Update(float dt)
+{
+    ImGuiWrapper::MultiplierParams statsParams = m_pImGui->GetMultipliers();
+
     m_fSeperation = statsParams.fSeperation;
-	m_fAlignment = statsParams.fAlignment;
-	m_fCohesion = statsParams.fCohesion;
-	m_fVelocity = statsParams.fVelocity;
+    m_fAlignment = statsParams.fAlignment;
+    m_fCohesion = statsParams.fCohesion;
+    m_fVelocity = statsParams.fVelocity;
+
+    Zoid::setSeperationMultiplier(m_fSeperation);
+    Zoid::setAlignmentMultiplier(m_fAlignment);
+    Zoid::setCohesionMultiplier(m_fCohesion);
+    Zoid::setVelocityMultiplier(m_fVelocity);
+
+    // update Zoids
+    for (std::shared_ptr<Zoid> pZoid : m_vecZoids)
+    {
+        pZoid->update(dt, m_vecZoids);
+
+        XMFLOAT3* pZoidPos = pZoid->getPosition();
+        XMFLOAT2 dimensions = m_pCamera->GetPlaneAt(pZoidPos->z);
+        pZoid->WrapBoundary(dimensions);
+    }
+
+    statsParams.fSeperation = m_fSeperation;
+    statsParams.fAlignment = m_fAlignment;
+    statsParams.fCohesion = m_fCohesion;
+    statsParams.fVelocity = m_fVelocity;
+    statsParams.iZoidAmount = m_vecZoids.size();
+
+    m_pImGui->SetMultipliers(statsParams);
 }
 
 void Game::Render(Graphics& pGraphics)
@@ -93,7 +103,6 @@ void Game::Render(Graphics& pGraphics)
 
 std::shared_ptr<Zoid> Game::createFish(XMFLOAT3 position, bool bShark)
 {
-    //Zoid* fish = new Zoid(position);
     std::shared_ptr<Zoid> pFish = std::make_shared<Zoid>(position);
 
     pFish->setScale(1.0f);
@@ -161,8 +170,6 @@ void Game::spiralFormation(int iCoils, int iRadius, int iRotation)
 
     int centerX, centerY;
     centerX = centerY = 0;
-
-    //Zoid* midFish = createFish(XMFLOAT3(centerX, centerY, 0), true);
 
     // For every side, step around and away from center.
     // start at the angle corresponding to a distance of chord

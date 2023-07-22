@@ -45,6 +45,7 @@ private:
 	void DeleteZoids();
 
 	Zoid::vecZoid					m_vecZoids;
+	std::shared_ptr<Zoid>			m_pShark;
 
 	std::unique_ptr<Camera>			m_pCamera;
 	std::unique_ptr<ImGuiWrapper>	m_pImGui;

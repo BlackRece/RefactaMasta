@@ -4,42 +4,43 @@
 #include "DrawableGameObject.h"
 #include <vector>
 
-struct ZoidData
-{
-	float fTimer;
-	float fTotalTime;
-	int iEaten;
-
-	std::vector<float> stats;
-
-	void AddZoid()
-	{
-		stats.push_back(fTimer);
-		fTotalTime += fTimer;
-		fTimer = 0;
-	}
-
-	float GetAverage()
-	{
-		if (stats.size() < 1)
-			return 0.0f;
-
-		float fTotal = 0;
-		for (float fInstance : stats)
-			fTotal += fInstance;
-
-		return fTotal / stats.size();
-	}
-
-	inline void Update(float delta) { fTimer += delta; }
-};
-
+class Camera;
 
 class Zoid :
 	public DrawableGameObject
 {
 public:
 	typedef vector<std::shared_ptr<Zoid>> vecZoid;
+
+	struct ZoidData
+	{
+		float fTimer;
+		float fTotalTime;
+		int iEaten;
+
+		std::vector<float> stats;
+
+		void AddZoid()
+		{
+			stats.push_back(fTimer);
+			fTotalTime += fTimer;
+			fTimer = 0;
+		}
+
+		float GetAverage()
+		{
+			if (stats.size() < 1)
+				return 0.0f;
+
+			float fTotal = 0;
+			for (float fInstance : stats)
+				fTotal += fInstance;
+
+			return fTotal / stats.size();
+		}
+
+		inline void Update(float delta) { fTimer += delta; }
+	};
 
 	Zoid(XMFLOAT3 position);
 	~Zoid();
@@ -53,8 +54,11 @@ public:
 	static void						setVelocityMultiplier(const float value);
 
 	XMFLOAT3*						getDirection() { return &m_direction; }
-	void							checkIsOnScreenAndFix(const XMMATRIX& view, const XMMATRIX& proj);
+
+	void							WrapBoundary(const XMFLOAT2 &dimensions);
+
 	void							update(float t, vecZoid drawList);
+	//void							UpdateTest(float t, vecZoid drawList);
 
 	void							setRange(const float value);
 

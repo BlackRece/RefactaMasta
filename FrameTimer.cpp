@@ -38,7 +38,7 @@ bool FrameTimer::Tick()
     m_tpStart = timeCur;
 
     m_fDeltaTime += timeDiff.count() / 1000.0f;
-    if (m_fDeltaTime >= m_fDuration)
+    if (m_fDeltaTime > m_fDuration)
         m_fDeltaTime -= m_fDuration;
 
     return m_fDeltaTime < m_fDuration;

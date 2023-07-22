@@ -1,9 +1,11 @@
 #include "Zoid.h"
 
+//#include "Camera.h"
+
 #define NEARBY_DISTANCE			20.0f	// how far Zoids can see
 
 // Define the static member variables
-ZoidData Zoid::m_stats;
+Zoid::ZoidData Zoid::m_stats;
 
 float Zoid::m_seperationMultiplier = 1.0f;
 float Zoid::m_alignmentMultiplier = 1.0f;
@@ -34,7 +36,8 @@ void Zoid::createRandomDirection()
 		x = RandomFloat(-5.f, 5.f);
 		y = RandomFloat(-5.f, 5.f);
 	}
-	setDirection(XMFLOAT3(x, y, z));
+	//setDirection(XMFLOAT3(x, y, z));
+	setDirection(XMFLOAT3(0.0f, -1.0f, z));
 }
 
 void Zoid::setDirection(XMFLOAT3 direction)
@@ -79,13 +82,8 @@ void Zoid::update(float t, vecZoid ZoidList)
 	//XMFLOAT3 vDirection = vDesiredDirection;
 
 	float fSpeed = t * m_speed;
-	if (m_scale != 1) fSpeed *= 1.5f;
-	// set shark
-	if (m_scale != 1) {
-		//XMFLOAT3 vAgression = multiplyFloat3(vSeparation, -1.0f);
-		//vVelocity = addFloat3(vAgression, vAlignment);
-		//vVelocity = addFloat3(vVelocity, vCohesion);
-	}
+	if (m_scale != 1) 
+		fSpeed *= 2.0f;
 
 	m_direction = addFloat3(m_direction, vDirection);
 
@@ -98,6 +96,36 @@ void Zoid::update(float t, vecZoid ZoidList)
 
 	DrawableGameObject::update(t);
 }
+
+//void Zoid::UpdateTest(float t, vecZoid ZoidList)
+//{
+//	// create a list of nearby Zoids
+//	//vecZoid nearZoids = nearbyZoids(ZoidList);
+//
+//	/*XMFLOAT3 vDesiredDirection = m_scale == 1
+//		? calculateFlockingVector(nearZoids)
+//		: calculatePredatorVector(nearZoids);*/
+//
+//	//add lerp m_direction to desired dir
+//	//XMFLOAT3 vDirection = lerpFloat3(m_direction, vDesiredDirection, t);
+//	XMFLOAT3 vDirection = m_direction;
+//
+//	float fSpeed = t * m_speed;
+//	/*
+//	if (m_scale != 1) fSpeed *= 1.5f;
+//	
+//	m_direction = addFloat3(m_direction, vDirection);
+//
+//	if (magnitudeFloat3(m_direction) == 0.0f)
+//		createRandomDirection();
+//	*/
+//	XMFLOAT3 vVelocity = multiplyFloat3(m_direction, fSpeed);
+//
+//	m_direction = normaliseFloat3(vVelocity);
+//	m_position = addFloat3(m_position, m_direction);
+//
+//	DrawableGameObject::update(t);
+//}
 
 XMFLOAT3 Zoid::addWeightedFloat3(XMFLOAT3& dest, XMFLOAT3& source, const float multiplier)
 {
@@ -163,7 +191,7 @@ XMFLOAT3 Zoid::calculatePredatorVector(vecZoid ZoidList)
 	//TODO: can't delete! must mark for deletion so that another process can remove this Zoid.
 	if (nearest != nullptr && nearestDistance <= 5.0f)
 	{
-		nearest->setPosition(XMFLOAT3(0, 0, -100));
+		nearest->setPosition(XMFLOAT3(0, 0, 0));
 		m_stats.AddZoid();
 	}
 
@@ -403,51 +431,18 @@ Zoid::vecZoid Zoid::nearbyZoids(vecZoid ZoidList)
 	return nearZoids;
 }
 
-void Zoid::checkIsOnScreenAndFix(const XMMATRIX& view, const XMMATRIX& proj)
+void Zoid::WrapBoundary(const XMFLOAT2& dimensions)
 {
-	XMFLOAT4 v4;
-	v4.x = m_position.x;
-	v4.y = m_position.y;
-	v4.z = m_position.z;
-	v4.w = 1.0f;
+	float halfWidth = dimensions.x / 2.0f;
+	float halfHeight = dimensions.y / 2.0f;
 
-	XMVECTOR vScreenSpace = XMLoadFloat4(&v4);
-	XMVECTOR vScreenSpace2 = XMVector4Transform(vScreenSpace, view);
-	XMVECTOR vScreenSpace3 = XMVector4Transform(vScreenSpace2, proj);
+	if (m_position.x < -halfWidth)
+		m_position.x = halfWidth;
+	if (m_position.x > halfWidth)
+		m_position.x = -halfWidth;
 
-	XMFLOAT4 v;
-	XMStoreFloat4(&v, vScreenSpace3);
-	v.x /= v.w;
-	v.y /= v.w;
-	v.z /= v.w;
-	v.w /= v.w;
-
-	float fOffset = 10; // a suitable distance to rectify position within clip space
-	if (v.x < -1 || v.x > 1 || v.y < -1 || v.y > 1)
-	{
-		if (v.x < -1 || v.x > 1) {
-			v4.x = -v4.x + (fOffset * v.x);
-		}
-		else if (v.y < -1 || v.y > 1) {
-			v4.y = -v4.y + (fOffset * v.y);
-		}
-
-		// throw a bit of randomness into the mix
-		createRandomDirection();
-	}
-
-	// method 1 - appear on the other side
-	m_position.x = v4.x;
-	m_position.y = v4.y;
-	m_position.z = v4.z;
-
-
-	// method2 - bounce off sides and head to centre
-	/*if (v.x < -1 || v.x > 1 || v.y < -1 || v.y > 1)
-	{
-		m_direction = multiplyFloat3(m_direction, -1);;
-		m_direction = normaliseFloat3(m_direction);
-	}*/
-
-	return;
+	if (m_position.y < -halfHeight)
+		m_position.y = halfHeight;
+	if (m_position.y > halfHeight)
+		m_position.y = -halfHeight;
 }
