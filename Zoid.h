@@ -58,7 +58,6 @@ public:
 	void							WrapBoundary(const XMFLOAT2 &dimensions);
 
 	void							update(float t, vecZoid drawList);
-	//void							UpdateTest(float t, vecZoid drawList);
 
 	void							setRange(const float value);
 
